@@ -197,3 +197,6 @@ dmypy.json
 # React
 build/
 .eslintcache
+
+# Local alembic template (not used)
+migration/
