@@ -32,7 +32,7 @@
 
 /* Стили для выполненных задач */
 .event-done {
-  opacity: 0.7 !important;
+  opacity: 0.85 !important;
   text-decoration: line-through !important;
 }
 
@@ -83,10 +83,11 @@
   border-radius: 4px;
   font-size: 0.9rem;
   cursor: pointer;
+  opacity: 0.95;
 }
 
 .rbc-event:hover {
-  opacity: 0.9;
+  opacity: 1;
 }
 
 .rbc-time-view, .rbc-month-view {
@@ -111,7 +112,7 @@
 }
 
 .rbc-day-slot .rbc-time-slot {
-  opacity: 0.7;
+  opacity: 0.85; /* немного более четкие линии времени */
 }
 
 .rbc-off-range-bg {

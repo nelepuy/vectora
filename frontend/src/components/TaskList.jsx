@@ -20,6 +20,7 @@ const SortableTask = ({ task, onStatusChange, onDeleteTask }) => {
     attributes,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
@@ -85,16 +86,30 @@ const SortableTask = ({ task, onStatusChange, onDeleteTask }) => {
     onDeleteTask(task.id);
   };
 
+  const blockDndForInteractive = (e) => {
+    const target = e.target;
+    if (
+      target.closest?.('.task-checkbox') ||
+      target.closest?.('.delete-btn') ||
+      target.closest?.('.task-actions')
+    ) {
+      e.stopPropagation();
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`tg-task-item ${task.status === 'completed' ? 'completed' : ''} ${isDragging ? 'dragging' : ''}`}
+      className={`tg-task-item ${task.status ? 'completed' : ''} ${isDragging ? 'dragging' : ''}`}
+      onPointerDownCapture={blockDndForInteractive}
+      onMouseDownCapture={blockDndForInteractive}
     >
       <div 
         className="task-drag-handle"
-        {...listeners}
+        ref={setActivatorNodeRef}
         {...attributes}
+        {...listeners}
         title="Перетащить задачу"
       >
         <div className="drag-dots">
@@ -108,15 +123,17 @@ const SortableTask = ({ task, onStatusChange, onDeleteTask }) => {
       </div>
 
       {/* Основной контент — не перетаскивается */}
-      <div className="task-content">
+  <div className="task-content" onPointerDownCapture={blockDndForInteractive} onMouseDownCapture={blockDndForInteractive}>
         {/* Чекбокс — изолирован от DnD */}
         <div className="task-checkbox-container">
           <input
             type="checkbox"
-            checked={task.status === 'completed'}
+            checked={!!task.status}
             onChange={handleCheckboxChange}
             className="task-checkbox"
             onClick={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
           />
         </div>
 
@@ -153,6 +170,8 @@ const SortableTask = ({ task, onStatusChange, onDeleteTask }) => {
           <button
             className="delete-btn"
             onClick={handleDelete}
+            onPointerDown={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
             title="Удалить задачу"
           >
             🗑️
@@ -170,6 +189,8 @@ function TaskList({ theme, tasks = [], onTaskMove, onStatusChange, onDeleteTask 
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 8,
+        delay: 120,
+        tolerance: 5,
       },
     })
   );

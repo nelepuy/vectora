@@ -8,10 +8,17 @@ APP_VERSION = settings.app_version
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION)
 
+# Преобразуем CORS-оригины к списку строк (в .env может быть одна строка или JSON-массив)
+origins_setting = settings.backend_cors_origins
+if isinstance(origins_setting, str):
+    allow_origins = [o.strip() for o in origins_setting.split(",") if o.strip()]
+else:
+    allow_origins = origins_setting or []
+
 # CORS: в проде домены задаются через переменные окружения
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.backend_cors_origins or [],
+    allow_origins=allow_origins,
     allow_origin_regex=settings.backend_cors_regex,
     allow_credentials=True,
     allow_methods=["*"],

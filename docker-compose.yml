@@ -15,6 +15,9 @@ services:
     build: ./backend
     env_file:
       - ./backend/app/.env
+    environment:
+      # Переопределяем CORS для локалки (важно при конфликте значений в .env внутри образа)
+      - BACKEND_CORS_ORIGINS=http://localhost:3000
     depends_on:
       - db
     ports:

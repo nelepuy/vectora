@@ -114,27 +114,37 @@ function App() {
     const task = tasks.find(t => t.id === taskId);
     if (!task) return;
 
+    // Оптимистичное обновление UI
+    const prevTasks = tasks;
+    const nextTasks = tasks.map(t => t.id === taskId ? { ...t, status: !t.status } : t);
+    setTasks(nextTasks);
+
     try {
       const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify({
-          status: !task.status,
-        }),
+        body: JSON.stringify({ status: !task.status }),
       });
 
-      if (response.ok) {
-        const updatedTask = await response.json();
-        setTasks(tasks.map(t =>
-          t.id === taskId ? { ...t, status: !t.status } : t
-        ));
-      } else {
-        console.error('Ошибка ответа сервера:', response.status, await response.text());
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Ошибка ответа сервера:', response.status, text);
+        // Откат UI при ошибке
+        setTasks(prevTasks);
+        try {
+          webApp?.showPopup({ title: 'Ошибка', message: 'Не удалось изменить статус', buttons: [{ type: 'close' }] });
+        } catch {}
       }
     } catch (error) {
       console.error('Ошибка обновления статуса:', error);
+      // Откат UI при ошибке сети
+      setTasks(prevTasks);
+      try {
+        webApp?.showPopup({ title: 'Ошибка', message: 'Проблема с сетью', buttons: [{ type: 'close' }] });
+      } catch {}
     }
   };
 
