@@ -42,7 +42,8 @@ const SortableTask = ({ task, onStatusChange, onDeleteTask }) => {
     tomorrow.setDate(today.getDate() + 1);
     
     // Формат времени
-    const time = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  // Важно: dateStr приходит без Z, это локальное время; отображаем по локали пользователя
+  const time = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
     
     if (date.toDateString() === today.toDateString()) {
       return `Сегодня ${time}`;

@@ -4,10 +4,28 @@ import useTelegramWebApp from "../hooks/useTelegramWebApp";
 
 function AddTaskModal({ onSubmit, open, setOpen }) {
   const { webApp } = useTelegramWebApp();
+  // Формат YYYY-MM-DD в локальном времени (для input type=date)
+  const formatLocalDate = (d) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Локальный ISO без часового пояса (без Z), чтобы сервер сохранил «настенные» часы
+  const toLocalISOStringNoTZ = (d) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).padStart(2, '0');
+    return `${y}-${m}-${day}T${hh}:${mm}:${ss}`;
+  };
   const [taskData, setTaskData] = useState({
     title: "",
     description: "",
-    date: new Date().toISOString().split("T")[0],
+    date: formatLocalDate(new Date()),
     time: "12:00",
     priority: "normal",
   });
@@ -18,11 +36,13 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
     try {
       const [hours, minutes] = taskData.time.split(":");
       const dateTime = new Date(taskData.date);
-      dateTime.setHours(parseInt(hours), parseInt(minutes));
+      // Устанавливаем локальное время без перевода в UTC
+      dateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
       await onSubmit({
         ...taskData,
-        dateTime: dateTime.toISOString(),
+        // Отправляем локальный ISO без Z, чтобы бэкенд сохранил именно выбранные часы
+        dateTime: toLocalISOStringNoTZ(dateTime),
       });
 
       // Закрываем модалку
@@ -32,7 +52,7 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
       setTaskData({
         title: "",
         description: "",
-        date: new Date().toISOString().split("T")[0],
+        date: formatLocalDate(new Date()),
         time: "12:00",
         priority: "normal",
       });
