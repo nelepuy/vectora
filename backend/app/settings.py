@@ -1,4 +1,3 @@
-from pydantic import AnyHttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List, Optional
 
@@ -8,9 +7,8 @@ class Settings(BaseSettings):
     app_version: str = "1.0.0"
 
     # CORS
-    # В Pydantic v2 списки из env по умолчанию парсятся через JSON. Проще задавать как строки через запятую и парсить вручную,
-    # но для краткости оставим List[str] и будем указывать в .env один домен либо JSON-массив.
-    backend_cors_origins: List[str] = []
+    # Читаем как строку (список доменов через запятую), парсим вручную в main.py
+    backend_cors_origins: Optional[str] = None
     backend_cors_regex: Optional[str] = None
 
     # Конфигурация Settings для pydantic-settings

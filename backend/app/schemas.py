@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 
@@ -26,6 +26,5 @@ class TaskOut(TaskBase):
     status: bool
     created_at: datetime
     position: int
-
-    class Config:
-        from_attributes = True
+    # Для Pydantic v2: разрешаем построение из ORM-объектов
+    model_config = ConfigDict(from_attributes=True)
