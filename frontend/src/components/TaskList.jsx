@@ -163,6 +163,24 @@ const SortableTask = ({ task, onStatusChange, onDeleteTask }) => {
               📅 {formatDate(task.date_time)}
             </div>
           )}
+          
+          {/* Категория и теги */}
+          <div className="task-meta">
+            {task.category && (
+              <span className="task-category">
+                📁 {task.category}
+              </span>
+            )}
+            {task.tags && task.tags.length > 0 && (
+              <div className="task-tags">
+                {task.tags.map((tag, idx) => (
+                  <span key={idx} className="task-tag">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Удаление — изолировано от DnD */}

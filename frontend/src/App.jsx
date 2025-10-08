@@ -6,6 +6,7 @@ import ThemeSwitcher from "./components/ThemeSwitcher";
 import AddTaskModal from "./components/AddTaskModal";
 import TaskFilters from "./components/TaskFilters";
 import TaskStats from "./components/TaskStats";
+import TaskSorter from "./components/TaskSorter";
 import useTelegramWebApp from "./hooks/useTelegramWebApp";
 import "./App.css";
 
@@ -28,16 +29,20 @@ function App() {
   });
   const [tasks, setTasks] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [filters, setFilters] = useState({ search: "", status: "all", priority: "all" });
+  const [filters, setFilters] = useState({ search: "", status: "all", priority: "all", category: "", tag: "" });
+  const [sortBy, setSortBy] = useState("position");
   const { webApp, user } = useTelegramWebApp();
 
-  const fetchTasks = async (currentFilters = filters) => {
+  const fetchTasks = async (currentFilters = filters, currentSort = sortBy) => {
     try {
       // Строим query-параметры
       const params = new URLSearchParams();
       if (currentFilters.search) params.append('search', currentFilters.search);
       if (currentFilters.status !== 'all') params.append('status', currentFilters.status);
       if (currentFilters.priority !== 'all') params.append('priority', currentFilters.priority);
+      if (currentFilters.category) params.append('category', currentFilters.category);
+      if (currentFilters.tag) params.append('tag', currentFilters.tag);
+      if (currentSort) params.append('sort_by', currentSort);
       
       const url = `${API_BASE}/tasks/?${params.toString()}`;
       const response = await fetch(url, {
@@ -54,7 +59,12 @@ function App() {
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    fetchTasks(newFilters);
+    fetchTasks(newFilters, sortBy);
+  };
+
+  const handleSortChange = (newSort) => {
+    setSortBy(newSort);
+    fetchTasks(filters, newSort);
   };
 
   useEffect(() => {
@@ -209,6 +219,7 @@ function App() {
           <>
             <TaskStats tasks={tasks} />
             <TaskFilters onFilterChange={handleFilterChange} initialFilters={filters} />
+            <TaskSorter sortBy={sortBy} onSortChange={handleSortChange} />
             <TaskList
               theme={theme}
               tasks={tasks}

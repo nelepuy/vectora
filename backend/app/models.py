@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 
@@ -14,5 +14,7 @@ class Task(Base):
     priority = Column(String, default="normal")  # приоритет: low, normal, high
     status = Column(Boolean, default=False)
     position = Column(Integer, default=0)  # позиция для сортировки
+    category = Column(String, default=None, nullable=True)  # категория задачи
+    tags = Column(JSON, default=list)  # список тегов ["work", "urgent", ...]
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
