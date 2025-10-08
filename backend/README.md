@@ -1,88 +1,211 @@
 # Vectora Backend (FastAPI)
 
-Бэкенд сервиса задач на FastAPI + SQLAlchemy + PostgreSQL. Готов к локальному запуску и деплою.
-## Возможности
+Бэкенд для Telegram Mini App на FastAPI + SQLAlchemy + PostgreSQL с поддержкой аутентификации через Telegram WebApp.
 
-- CRUD по задачам: `/tasks/`
-- Pydantic-схемы и автодокументация Swagger (`/docs`)
-- Настраиваемый CORS через переменные окружения
+## ✨ Возможности
 
-## Быстрый старт
+- ✅ **CRUD API для задач** с поддержкой фильтрации и поиска
+- ✅ **Telegram аутентификация** через initData
+- ✅ **Автодокументация** Swagger UI (`/docs`) и ReDoc (`/redoc`)
+- ✅ **Пагинация и фильтрация** задач
+- ✅ **Структурированное логирование**
+- ✅ **Централизованная обработка ошибок**
+- ✅ **Unit и интеграционные тесты**
+- ✅ **Настраиваемый CORS**
+
+## 🚀 Быстрый старт
+
+### Локальная разработка
 
 ```powershell
 cd backend
-python -m venv venv; .\venv\Scripts\activate
+python -m venv venv
+.\venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
-API: http://localhost:8000 (Swagger: /docs)
 
-## Переменные окружения (`app/.env`)
+API будет доступно на http://localhost:8000
 
+### Docker
+
+```powershell
+docker-compose up -d backend
 ```
-DATABASE_URL=postgresql://postgres:postgres@db:5432/tasks
-JWT_SECRET=change-me
-BACKEND_CORS_ORIGINS=https://your-frontend-domain.com
-BACKEND_CORS_REGEX=
-```
-## Структура
+
+## 📁 Структура проекта
 
 ```
 backend/
-└─ app/
-  ├─ routers/      # эндпоинты
-  # Vectora Backend (FastAPI)
+├── app/
+│   ├── routers/          # API endpoints
+│   │   └── tasks.py      # CRUD операции с задачами
+│   ├── auth.py           # Telegram аутентификация
+│   ├── crud.py           # Операции с БД
+│   ├── database.py       # Подключение к PostgreSQL
+│   ├── exceptions.py     # Кастомные исключения
+│   ├── logging_config.py # Настройка логирования
+│   ├── main.py           # FastAPI приложение
+│   ├── models.py         # SQLAlchemy модели
+│   ├── schemas.py        # Pydantic схемы
+│   └── settings.py       # Конфигурация
+├── migrations/           # Alembic миграции
+├── tests/               # Тесты
+│   ├── conftest.py      # Pytest fixtures
+│   ├── test_api.py      # API тесты
+│   ├── test_auth.py     # Тесты аутентификации
+│   └── test_crud.py     # CRUD тесты
+├── requirements.txt     # Зависимости
+├── pytest.ini          # Конфигурация pytest
+└── API.md              # Документация API
+```
 
-  Небольшой бэкенд на FastAPI + SQLAlchemy + PostgreSQL для задач. Готов к локальному запуску и деплою.
+## ⚙️ Переменные окружения
 
-  ## Возможности
+Создайте `app/.env` на основе `.env.example`:
 
-  - REST CRUD по маршрутам `/tasks/`
-  - Pydantic‑схемы, автоматическая документация Swagger (`/docs`)
-  - CORS через переменные окружения (origin‑лист и/или regex)
+```env
+# Режим разработки
+DEBUG=true
 
-  ## Запуск локально
+# База данных
+DATABASE_URL=postgresql://postgres:postgres@db:5432/tasks
 
-  ```powershell
-  cd backend
-  python -m venv venv; .\venv\Scripts\activate
-  pip install -r requirements.txt
-  uvicorn app.main:app --reload --port 8000
-  ```
+# CORS (разделённые запятыми домены)
+BACKEND_CORS_ORIGINS=http://localhost:3000,https://your-app.com
 
-  API: http://localhost:8000 (Swagger: /docs)
+# Telegram Bot Token (обязательно для продакшена)
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token-here
+```
 
-  ## Окружение (`app/.env`)
+## 🧪 Тестирование
 
-  ```
-  DATABASE_URL=postgresql://postgres:postgres@db:5432/tasks
-  JWT_SECRET=change-me
-  BACKEND_CORS_ORIGINS=https://your-frontend-domain.com
-  BACKEND_CORS_REGEX=
-  ```
+### Запуск всех тестов
 
-  ## Структура
+```powershell
+# Windows
+.\run_tests.ps1
 
-  ```
-  backend/
-  └─ app/
-     ├─ routers/      # эндпоинты
-     ├─ models.py     # модели БД
-     ├─ schemas.py    # Pydantic‑схемы
-     ├─ crud.py       # операции с БД
-     ├─ database.py   # подключение к БД
-     ├─ settings.py   # конфиг (CORS и др.)
-     └─ main.py       # приложение FastAPI
-  ```
+# Linux/Mac
+./run_tests.sh
+```
 
-  ## Миграции (Alembic)
+### Запуск конкретных тестов
 
-  ```powershell
-  alembic upgrade head
-  ```
+```powershell
+pytest tests/test_api.py -v
+pytest tests/test_crud.py::test_create_task -v
+```
 
-  ## Деплой
+### Тесты с покрытием
 
-  - Задайте CORS через `BACKEND_CORS_ORIGINS` или `BACKEND_CORS_REGEX`
-  - Храните `DATABASE_URL`, `JWT_SECRET` в переменных окружения/секретах
-  - Рекомендуется запускать под реверс‑прокси (Nginx) с HTTPS
+```powershell
+pytest --cov=app --cov-report=html
+```
+
+Отчёт будет в `htmlcov/index.html`
+
+## 📊 API Endpoints
+
+### Основные
+
+- `GET /health` — Healthcheck
+- `GET /version` — Версия API
+- `GET /docs` — Swagger UI
+- `GET /redoc` — ReDoc документация
+
+### Задачи
+
+- `GET /tasks/` — Список задач с фильтрацией
+- `GET /tasks/{id}` — Получить задачу
+- `POST /tasks/` — Создать задачу
+- `PUT /tasks/{id}` — Обновить задачу
+- `DELETE /tasks/{id}` — Удалить задачу
+
+**Параметры фильтрации:**
+- `skip`, `limit` — пагинация
+- `status` — фильтр по статусу (true/false)
+- `priority` — фильтр по приоритету (low/normal/high)
+- `search` — поиск по названию и описанию
+
+Подробная документация в [API.md](API.md)
+
+## 🔐 Аутентификация
+
+API использует Telegram WebApp initData для аутентификации.
+
+**Заголовок запроса:**
+```
+X-Telegram-Init-Data: <initData из window.Telegram.WebApp>
+```
+
+В режиме `DEBUG=true` аутентификация не требуется (используется test_user).
+
+## 🗄️ Миграции базы данных
+
+```powershell
+# Применить миграции
+alembic upgrade head
+
+# Создать новую миграцию
+alembic revision --autogenerate -m "описание изменений"
+
+# Откатить последнюю миграцию
+alembic downgrade -1
+```
+
+## 📝 Логирование
+
+Логи выводятся в stdout в формате:
+```
+2025-10-07 10:00:00 - vectora - INFO - Запрос: GET /tasks/
+```
+
+Уровень логирования зависит от `DEBUG`:
+- `DEBUG=true` → уровень DEBUG
+- `DEBUG=false` → уровень INFO
+
+## 🚀 Деплой
+
+### Продакшен чеклист
+
+1. ✅ Установите `DEBUG=false`
+2. ✅ Укажите реальный `TELEGRAM_BOT_TOKEN`
+3. ✅ Настройте `BACKEND_CORS_ORIGINS` на ваши домены
+4. ✅ Используйте надёжный `DATABASE_URL` (не localhost)
+5. ✅ Запускайте за HTTPS (Nginx/Traefik)
+6. ✅ Настройте мониторинг и алерты
+
+### Docker production
+
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+## 🤝 Разработка
+
+### Добавление новых endpoint'ов
+
+1. Создайте router в `app/routers/`
+2. Добавьте CRUD функции в `app/crud.py`
+3. Определите Pydantic схемы в `app/schemas.py`
+4. Подключите router в `app/main.py`
+5. Напишите тесты в `tests/`
+
+### Code style
+
+- Следуйте PEP 8
+- Используйте type hints
+- Документируйте функции docstring'ами
+- Пишите тесты для новой функциональности
+
+## 📚 Дополнительная информация
+
+- [API документация](API.md)
+- [Alembic миграции](migrations/)
+- [Примеры тестов](tests/)

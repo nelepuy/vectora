@@ -4,6 +4,7 @@ import TaskList from "./components/TaskList";
 import CalendarView from "./components/CalendarView";
 import ThemeSwitcher from "./components/ThemeSwitcher";
 import AddTaskModal from "./components/AddTaskModal";
+import TaskFilters from "./components/TaskFilters";
 import useTelegramWebApp from "./hooks/useTelegramWebApp";
 import "./App.css";
 
@@ -26,11 +27,19 @@ function App() {
   });
   const [tasks, setTasks] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [filters, setFilters] = useState({ search: "", status: "all", priority: "all" });
   const { webApp, user } = useTelegramWebApp();
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (currentFilters = filters) => {
     try {
-      const response = await fetch(API_BASE + '/tasks/', {
+      // Строим query-параметры
+      const params = new URLSearchParams();
+      if (currentFilters.search) params.append('search', currentFilters.search);
+      if (currentFilters.status !== 'all') params.append('status', currentFilters.status);
+      if (currentFilters.priority !== 'all') params.append('priority', currentFilters.priority);
+      
+      const url = `${API_BASE}/tasks/?${params.toString()}`;
+      const response = await fetch(url, {
         headers: {
           'Accept': 'application/json',
         },
@@ -40,6 +49,11 @@ function App() {
     } catch (error) {
       console.error('Ошибка загрузки задач:', error);
     }
+  };
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    fetchTasks(newFilters);
   };
 
   useEffect(() => {
@@ -191,13 +205,16 @@ function App() {
           />
         )}
         {mode === "tasks" && (
-          <TaskList
-            theme={theme}
-            tasks={tasks}
-            onTaskMove={handleTaskMove}
-            onStatusChange={handleStatusChange}
-            onDeleteTask={handleDeleteTask}
-          />
+          <>
+            <TaskFilters onFilterChange={handleFilterChange} initialFilters={filters} />
+            <TaskList
+              theme={theme}
+              tasks={tasks}
+              onTaskMove={handleTaskMove}
+              onStatusChange={handleStatusChange}
+              onDeleteTask={handleDeleteTask}
+            />
+          </>
         )}
         {mode === "settings" && (
           <div className="tg-settings">

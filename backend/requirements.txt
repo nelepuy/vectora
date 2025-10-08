@@ -7,3 +7,6 @@ python-dotenv
 pydantic
 aiogram
 pydantic-settings
+pytest
+pytest-cov
+httpx

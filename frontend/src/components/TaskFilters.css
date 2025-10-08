@@ -1,0 +1,120 @@
+/* Стили для фильтров задач */
+.task-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+  background: var(--tg-header-bg);
+  border-radius: 12px;
+  margin: 12px;
+  border: 1px solid var(--tg-border);
+}
+
+.filter-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 16px;
+  border: 1px solid var(--tg-border);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--tg-text);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: var(--tg-neon-blue);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+  background: rgba(0, 212, 255, 0.05);
+}
+
+.filter-input::placeholder {
+  color: var(--tg-gray);
+  opacity: 0.7;
+}
+
+.filter-select {
+  padding: 10px 16px;
+  border: 1px solid var(--tg-border);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--tg-text);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--tg-neon-blue);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+}
+
+.filter-select option {
+  background: var(--tg-header-bg);
+  color: var(--tg-text);
+}
+
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid var(--tg-neon-blue);
+  color: var(--tg-neon-blue);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-chip:hover {
+  background: rgba(0, 212, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.filter-chip.active {
+  background: var(--tg-neon-blue);
+  color: #000;
+  font-weight: 600;
+}
+
+.clear-filters-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--tg-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--tg-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-filters-btn:hover {
+  border-color: var(--tg-error);
+  color: var(--tg-error);
+  background: rgba(255, 51, 102, 0.1);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .task-filters {
+    flex-direction: column;
+  }
+  
+  .filter-input,
+  .filter-select {
+    width: 100%;
+    min-width: unset;
+  }
+}
