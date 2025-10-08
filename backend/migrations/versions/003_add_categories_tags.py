@@ -1,7 +1,7 @@
 """add categories and tags to tasks
 
-Revision ID: 002_add_categories_tags
-Revises: 001_initial
+Revision ID: 003_add_categories_tags
+Revises: 002
 Create Date: 2024-12-24 18:00:00.000000
 
 """
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import JSON
 
 # revision identifiers, used by Alembic.
-revision = '002_add_categories_tags'
-down_revision = '001_initial'
+revision = '003_add_categories_tags'
+down_revision = '002'
 branch_labels = None
 depends_on = None
 
