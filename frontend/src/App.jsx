@@ -5,6 +5,7 @@ import CalendarView from "./components/CalendarView";
 import ThemeSwitcher from "./components/ThemeSwitcher";
 import AddTaskModal from "./components/AddTaskModal";
 import TaskFilters from "./components/TaskFilters";
+import TaskStats from "./components/TaskStats";
 import useTelegramWebApp from "./hooks/useTelegramWebApp";
 import "./App.css";
 
@@ -206,6 +207,7 @@ function App() {
         )}
         {mode === "tasks" && (
           <>
+            <TaskStats tasks={tasks} />
             <TaskFilters onFilterChange={handleFilterChange} initialFilters={filters} />
             <TaskList
               theme={theme}
