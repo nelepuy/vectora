@@ -50,8 +50,16 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
   position: relative;
+}
+
+/* Разные эффекты для темной и светлой темы */
+.theme-dark .tg-title {
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.theme-light .tg-title {
+  filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.2));
 }
 
 .tg-title::after {
@@ -185,11 +193,11 @@
   height: 56px;
   border-radius: 28px;
   background: linear-gradient(135deg, var(--tg-neon-blue), var(--tg-neon-purple));
-  color: white;
+  color: white !important; /* Всегда белая иконка */
   border: none;
   box-shadow: 
-    0 4px 20px rgba(0, 212, 255, 0.3),
-    0 0 40px rgba(0, 212, 255, 0.2);
+    0 4px 20px rgba(37, 99, 235, 0.4),
+    0 2px 10px rgba(124, 58, 237, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -198,6 +206,19 @@
   transition: all 0.3s ease;
   z-index: 1000;
   overflow: hidden;
+}
+
+/* Специальные стили для светлой темы */
+.theme-light .tg-fab {
+  box-shadow: 
+    0 4px 20px rgba(37, 99, 235, 0.4),
+    0 2px 10px rgba(124, 58, 237, 0.3);
+}
+
+.theme-dark .tg-fab {
+  box-shadow: 
+    0 4px 20px rgba(0, 212, 255, 0.3),
+    0 0 40px rgba(0, 212, 255, 0.2);
 }
 
 .tg-fab::before {
@@ -215,6 +236,15 @@
 
 .tg-fab:hover {
   transform: scale(1.1);
+}
+
+.theme-light .tg-fab:hover {
+  box-shadow: 
+    0 6px 30px rgba(37, 99, 235, 0.5),
+    0 3px 15px rgba(124, 58, 237, 0.4);
+}
+
+.theme-dark .tg-fab:hover {
   box-shadow: 
     0 6px 25px rgba(0, 212, 255, 0.4),
     0 0 50px rgba(0, 212, 255, 0.3);
@@ -222,6 +252,12 @@
 
 .tg-fab:hover::before {
   opacity: 1;
+}
+
+/* Иконка внутри FAB всегда белая */
+.tg-fab svg {
+  color: white;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 /* Адаптивность для мобильных устройств */
@@ -258,6 +294,11 @@
   backdrop-filter: blur(15px);
 }
 
+.theme-light .modal-overlay {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+}
+
 .modal-content {
   background: var(--tg-header-bg);
   border-radius: 16px;
@@ -274,6 +315,14 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   animation: slideUp 0.3s ease-out;
   backdrop-filter: blur(20px);
+}
+
+.theme-light .modal-content {
+  box-shadow: 
+    0 25px 50px rgba(15, 23, 42, 0.15),
+    0 10px 30px rgba(15, 23, 42, 0.1),
+    0 0 0 1px rgba(203, 213, 225, 0.5);
+  border: 1px solid #e2e8f0;
 }
 
 .modal-header {
@@ -398,6 +447,18 @@
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Специальные стили для светлой темы */
+.theme-light .input-field,
+.theme-light select {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.theme-light .input-field::placeholder {
+  color: #94a3b8;
+}
+
 .input-field:focus, select:focus {
   outline: none;
   border-color: var(--tg-neon-blue);
@@ -406,6 +467,15 @@
     inset 0 2px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
   background: rgba(0, 212, 255, 0.05);
+}
+
+.theme-light .input-field:focus,
+.theme-light select:focus {
+  border-color: var(--tg-neon-blue);
+  box-shadow: 
+    0 0 0 3px rgba(37, 99, 235, 0.1),
+    0 2px 8px rgba(37, 99, 235, 0.15);
+  background: #ffffff;
 }
 
 .input-field::placeholder {
@@ -433,9 +503,18 @@
 
 .button.primary {
   background: linear-gradient(135deg, var(--tg-neon-blue), var(--tg-neon-purple));
-  color: white;
+  color: white !important;
   border: none;
   box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+}
+
+.theme-light .button.primary {
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+
+.button.primary span,
+.button.primary svg {
+  color: white;
 }
 
 .button.primary::before {
@@ -475,20 +554,25 @@
 /* Темы */
 .theme-light {
   --tg-bg: #f8fafc;
-  --tg-text: #1e293b;
+  --tg-text: #0f172a; /* Более контрастный темный текст */
   --tg-header-bg: #ffffff;
-  --tg-border: #e2e8f0;
+  --tg-border: #cbd5e1;
   --tg-accent: #3b82f6;
   --tg-accent-bg: #dbeafe;
   --tg-btn-bg: #fff;
-  --tg-btn-text: #1e293b;
+  --tg-btn-text: #0f172a; /* Более контрастный */
   --tg-success: #22c55e;
   --tg-warning: #eab308;
   --tg-error: #ef4444;
-  --tg-gray: #94a3b8;
+  --tg-gray: #64748b; /* Более темный серый */
   --tg-priority-low: #22c55e;
   --tg-priority-normal: #3b82f6;
   --tg-priority-high: #ef4444;
+  /* Добавляем neon переменные для светлой темы */
+  --tg-neon-blue: #2563eb; /* Более насыщенный синий */
+  --tg-neon-purple: #7c3aed; /* Более насыщенный фиолетовый */
+  --tg-neon-green: #16a34a; /* Более насыщенный зеленый */
+  --tg-neon-pink: #ec4899; /* Более насыщенный розовый */
 }
 
 .theme-dark {
