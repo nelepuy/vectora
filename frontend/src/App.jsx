@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { FaCalendarDay, FaListUl, FaCog, FaPlus } from "react-icons/fa";
 import TaskList from "./components/TaskList";
 import CalendarView from "./components/CalendarView";
 import ThemeSwitcher from "./components/ThemeSwitcher";
 import AddTaskModal from "./components/AddTaskModal";
+import EditTaskModal from "./components/EditTaskModal";
 import TaskFilters from "./components/TaskFilters";
 import TaskStats from "./components/TaskStats";
 import TaskSorter from "./components/TaskSorter";
@@ -29,11 +30,14 @@ function App() {
   });
   const [tasks, setTasks] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
   const [filters, setFilters] = useState({ search: "", status: "all", priority: "all", category: "", tag: "" });
   const [sortBy, setSortBy] = useState("position");
   const { webApp, user } = useTelegramWebApp();
 
-  const fetchTasks = async (currentFilters = filters, currentSort = sortBy) => {
+  // Мемоизированная функция загрузки задач
+  const fetchTasks = useCallback(async (currentFilters = filters, currentSort = sortBy) => {
     try {
       // Строим query-параметры
       const params = new URLSearchParams();
@@ -55,27 +59,21 @@ function App() {
     } catch (error) {
       console.error('Ошибка загрузки задач:', error);
     }
-  };
+  }, [filters, sortBy]);
 
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = useCallback((newFilters) => {
     setFilters(newFilters);
     fetchTasks(newFilters, sortBy);
-  };
+  }, [fetchTasks, sortBy]);
 
-  const handleSortChange = (newSort) => {
+  const handleSortChange = useCallback((newSort) => {
     setSortBy(newSort);
     fetchTasks(filters, newSort);
-  };
-
-  useEffect(() => {
-    if (webApp) {
-      fetchTasks();
-    }
-  }, [webApp]);
+  }, [fetchTasks, filters]);
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [fetchTasks]);
 
   useEffect(() => {
     try {
@@ -83,18 +81,20 @@ function App() {
     } catch {}
   }, [theme]);
 
-  const handleTaskMove = (sourceId, targetId) => {
-    const newTasks = [...tasks];
-    const sourceIndex = tasks.findIndex(t => t.id === sourceId);
-    const targetIndex = tasks.findIndex(t => t.id === targetId);
-    
-    const [removed] = newTasks.splice(sourceIndex, 1);
-    newTasks.splice(targetIndex, 0, removed);
-    
-    setTasks(newTasks);
-  };
+  const handleTaskMove = useCallback((sourceId, targetId) => {
+    setTasks(prevTasks => {
+      const newTasks = [...prevTasks];
+      const sourceIndex = prevTasks.findIndex(t => t.id === sourceId);
+      const targetIndex = prevTasks.findIndex(t => t.id === targetId);
+      
+      const [removed] = newTasks.splice(sourceIndex, 1);
+      newTasks.splice(targetIndex, 0, removed);
+      
+      return newTasks;
+    });
+  }, []);
 
-  const handleAddTask = async (taskData) => {
+  const handleAddTask = useCallback(async (taskData) => {
     try {
       const response = await fetch(API_BASE + '/tasks/', {
         method: 'POST',
@@ -107,6 +107,7 @@ function App() {
           description: taskData.description,
           date_time: taskData.dateTime,
           priority: taskData.priority,
+          category: taskData.category || null,
           status: false,
           position: tasks.length
         }),
@@ -133,16 +134,15 @@ function App() {
       });
       throw error;
     }
-  };
+  }, [tasks.length, fetchTasks, webApp]);
 
-  const handleStatusChange = async (taskId) => {
+  const handleStatusChange = useCallback(async (taskId) => {
     const task = tasks.find(t => t.id === taskId);
     if (!task) return;
 
     // Оптимистичное обновление UI
     const prevTasks = tasks;
-    const nextTasks = tasks.map(t => t.id === taskId ? { ...t, status: !t.status } : t);
-    setTasks(nextTasks);
+    setTasks(prevTasks.map(t => t.id === taskId ? { ...t, status: !t.status } : t));
 
     try {
       const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
@@ -171,9 +171,9 @@ function App() {
         webApp?.showPopup({ title: 'Ошибка', message: 'Проблема с сетью', buttons: [{ type: 'close' }] });
       } catch {}
     }
-  };
+  }, [tasks, webApp]);
 
-  const handleDeleteTask = async (taskId) => {
+  const handleDeleteTask = useCallback(async (taskId) => {
     try {
       const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
         method: 'DELETE',
@@ -198,7 +198,52 @@ function App() {
         buttons: [{ type: 'close' }],
       });
     }
-  };
+  }, [tasks, webApp]);
+
+  const handleEditTask = useCallback((task) => {
+    setEditingTask(task);
+    setShowEditModal(true);
+  }, []);
+
+  const handleUpdateTask = useCallback(async (taskId, taskData) => {
+    try {
+      const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          title: taskData.title,
+          description: taskData.description,
+          date_time: taskData.dateTime,
+          priority: taskData.priority,
+          category: taskData.category,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || 'Ошибка при обновлении задачи');
+      }
+
+      await fetchTasks();
+
+      webApp?.showPopup({
+        title: 'Готово',
+        message: 'Задача обновлена',
+        buttons: [{ type: 'close' }],
+      });
+    } catch (error) {
+      console.error('Ошибка обновления задачи:', error);
+      webApp?.showPopup({
+        title: 'Ошибка',
+        message: error.message || 'Не удалось обновить задачу',
+        buttons: [{ type: 'close' }],
+      });
+      throw error;
+    }
+  }, [fetchTasks, webApp]);
 
   return (
     <div className={`tg-webapp theme-${theme}`}>
@@ -213,6 +258,7 @@ function App() {
             theme={theme}
             tasks={tasks}
             onTaskMove={handleTaskMove}
+            onEditTask={handleEditTask}
           />
         )}
         {mode === "tasks" && (
@@ -226,6 +272,7 @@ function App() {
               onTaskMove={handleTaskMove}
               onStatusChange={handleStatusChange}
               onDeleteTask={handleDeleteTask}
+              onEditTask={handleEditTask}
             />
           </>
         )}
@@ -241,6 +288,12 @@ function App() {
         onSubmit={handleAddTask} 
         open={showAddModal} 
         setOpen={setShowAddModal} 
+      />
+      <EditTaskModal 
+        task={editingTask} 
+        onSubmit={handleUpdateTask} 
+        open={showEditModal} 
+        setOpen={setShowEditModal} 
       />
       <button className="tg-fab" onClick={() => setShowAddModal(true)}>
         <FaPlus />

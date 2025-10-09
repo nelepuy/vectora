@@ -1,12 +1,38 @@
-fastapi
-uvicorn
-sqlalchemy
-alembic
-psycopg2-binary
-python-dotenv
-pydantic
-aiogram
-pydantic-settings
-pytest
-pytest-cov
-httpx
+# Core
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+sqlalchemy>=2.0.0
+alembic>=1.12.0
+psycopg2-binary>=2.9.9
+
+# Settings & Environment
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# Security
+python-jose[cryptography]>=3.3.0  # JWT tokens
+passlib[bcrypt]>=1.7.4  # Password hashing with bcrypt
+argon2-cffi>=23.1.0  # Argon2 password hashing (более безопасный)
+python-multipart>=0.0.6  # Form data parsing
+cryptography>=41.0.0  # Encryption utilities
+slowapi>=0.1.9  # Rate limiting
+
+# Telegram Bot
+aiogram>=3.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-asyncio>=0.21.0
+httpx>=0.25.0
+
+# Security Testing
+bandit>=1.7.5  # Security linter
+safety>=2.3.5  # Dependency vulnerability checker
+
+# Code Quality
+black>=23.0.0  # Code formatter
+flake8>=6.1.0  # Linter
+mypy>=1.7.0  # Type checker
+pylint>=3.0.0  # Code quality

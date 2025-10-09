@@ -25,27 +25,32 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
   const [taskData, setTaskData] = useState({
     title: "",
     description: "",
-    date: formatLocalDate(new Date()),
-    time: "12:00",
+    date: "",
+    time: "",
     priority: "normal",
     category: "",
-    tags: [],
   });
-  const [tagInput, setTagInput] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     try {
-      const [hours, minutes] = taskData.time.split(":");
-      const dateTime = new Date(taskData.date);
-      // Устанавливаем локальное время без перевода в UTC
-      dateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      let dateTimeValue = null;
+      
+      // Если заполнены дата И время - формируем dateTime
+      if (taskData.date && taskData.time) {
+        const [hours, minutes] = taskData.time.split(":");
+        const dateTime = new Date(taskData.date);
+        dateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        dateTimeValue = toLocalISOStringNoTZ(dateTime);
+      }
 
       await onSubmit({
-        ...taskData,
-        // Отправляем локальный ISO без Z, чтобы бэкенд сохранил именно выбранные часы
-        dateTime: toLocalISOStringNoTZ(dateTime),
+        title: taskData.title,
+        description: taskData.description,
+        priority: taskData.priority,
+        category: taskData.category || null,
+        dateTime: dateTimeValue,
       });
 
       // Закрываем модалку
@@ -55,13 +60,11 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
       setTaskData({
         title: "",
         description: "",
-        date: formatLocalDate(new Date()),
-        time: "12:00",
+        date: "",
+        time: "",
         priority: "normal",
         category: "",
-        tags: [],
       });
-      setTagInput("");
     } catch (error) {
       console.error("Ошибка при создании задачи:", error);
       webApp?.showPopup({
@@ -77,26 +80,6 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
     setTaskData((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
-
-  const handleAddTag = (e) => {
-    if (e.key === 'Enter' && tagInput.trim()) {
-      e.preventDefault();
-      if (!taskData.tags.includes(tagInput.trim())) {
-        setTaskData(prev => ({
-          ...prev,
-          tags: [...prev.tags, tagInput.trim()]
-        }));
-      }
-      setTagInput("");
-    }
-  };
-
-  const handleRemoveTag = (tagToRemove) => {
-    setTaskData(prev => ({
-      ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
     }));
   };
 
@@ -139,26 +122,24 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="date">Дата</label>
+                  <label htmlFor="date">Дата (необязательно)</label>
                   <input
                     type="date"
                     id="date"
                     name="date"
                     value={taskData.date}
                     onChange={handleChange}
-                    required
                     className="input-field"
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="time">Время</label>
+                  <label htmlFor="time">Время (необязательно)</label>
                   <input
                     type="time"
                     id="time"
                     name="time"
                     value={taskData.time}
                     onChange={handleChange}
-                    required
                     className="input-field"
                   />
                 </div>
@@ -187,48 +168,15 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
                   onChange={handleChange}
                   className="input-field"
                   placeholder="Работа, Личное, Учеба..."
+                  list="categories-list"
                 />
-              </div>
-              <div className="form-group">
-                <label htmlFor="tags">Теги</label>
-                <input
-                  type="text"
-                  id="tags"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={handleAddTag}
-                  className="input-field"
-                  placeholder="Добавьте тег и нажмите Enter"
-                />
-                {taskData.tags.length > 0 && (
-                  <div className="tags-container" style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '8px',
-                    marginTop: '8px'
-                  }}>
-                    {taskData.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        style={{
-                          background: 'linear-gradient(135deg, var(--tg-neon-blue), var(--tg-neon-purple))',
-                          color: 'white',
-                          padding: '4px 12px',
-                          borderRadius: '16px',
-                          fontSize: '0.85rem',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          cursor: 'pointer'
-                        }}
-                        onClick={() => handleRemoveTag(tag)}
-                      >
-                        {tag}
-                        <FaTimes style={{ fontSize: '0.7rem' }} />
-                      </span>
-                    ))}
-                  </div>
-                )}
+                <datalist id="categories-list">
+                  <option value="Работа" />
+                  <option value="Личное" />
+                  <option value="Учеба" />
+                  <option value="Дом" />
+                  <option value="Здоровье" />
+                </datalist>
               </div>
               <div className="modal-footer">
                 <button

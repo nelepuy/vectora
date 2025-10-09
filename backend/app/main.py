@@ -1,14 +1,22 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
-from app.routers import tasks
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from app.routers import tasks, auth
 from app.settings import settings
 from app.exceptions import VectoraException
 from app.logging_config import logger
+from app.security import SecurityHeaders
 import time
 
 APP_NAME = settings.app_name
 APP_VERSION = settings.app_version
+
+# Rate limiter для защиты от DDoS
+limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
     title=APP_NAME,
@@ -18,13 +26,32 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+# Добавляем rate limiter в state
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
+# Middleware для добавления security headers
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    
+    # Добавляем security headers
+    security_headers = SecurityHeaders.get_secure_headers()
+    for header, value in security_headers.items():
+        response.headers[header] = value
+    
+    return response
+
 
 # Middleware для логирования запросов
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
     start_time = time.time()
     
-    logger.info(f"Запрос: {request.method} {request.url.path}")
+    # Логируем IP для отслеживания подозрительной активности
+    client_host = request.client.host if request.client else "unknown"
+    logger.info(f"Запрос: {request.method} {request.url.path} от {client_host}")
     
     try:
         response = await call_next(request)
@@ -53,17 +80,27 @@ if isinstance(origins_setting, str):
 else:
     allow_origins = origins_setting or []
 
-# CORS: в проде домены задаются через переменные окружения
+# CORS: строгие настройки для продакшна
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allow_origins,
     allow_origin_regex=settings.backend_cors_regex,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"]
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Только нужные методы
+    allow_headers=["Content-Type", "Authorization", "Accept"],  # Только нужные headers
+    expose_headers=["Content-Type"],
+    max_age=600,  # Кэш preflight запросов на 10 минут
 )
 
+# Trusted Host Middleware - защита от Host header attacks
+if not settings.debug:
+    app.add_middleware(
+        TrustedHostMiddleware,
+        allowed_hosts=["localhost", "127.0.0.1", "*.yourdomain.com"]
+    )
+
+# Подключаем роутеры
+app.include_router(auth.router)
 app.include_router(tasks.router)
 
 

@@ -1,99 +1,268 @@
-# 📋 Vectora — Планировщик задач (Telegram Mini App)
+# Vectora - Telegram Mini App Task Manager# 📋 Vectora — Telegram Mini App Task Manager
 
-[![CI/CD](https://github.com/nelepuy/vectora/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/nelepuy/vectora/actions)
-[![Coverage](https://img.shields.io/badge/coverage-85%2B-brightgreen.svg)](./backend/README.md)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
-[![React](https://img.shields.io/badge/react-18-blue.svg)](https://reactjs.org/)
 
-**Современный task-менеджер** в виде Telegram Mini App с полнофункциональным REST API, интеграцией с Telegram Bot и production-ready архитектурой.
 
-## ✨ Возможности
+Task management application built as a Telegram Mini App.Modern task manager as a Telegram Mini App with FastAPI backend and React frontend.
 
-### Основные
-- 📝 **CRUD операции** для задач с полной валидацией
-- 🔍 **Фильтрация и поиск** по статусу, приоритету, тексту (debounced)
-- 📅 **Календарное представление** (React Big Calendar)
+
+
+## Stack## ✨ Возможности
+
+
+
+- **Backend:** FastAPI, PostgreSQL, SQLAlchemy, Alembic### Основные
+
+- **Frontend:** React 18, Telegram WebApp SDK- 📝 **CRUD операции** для задач с полной валидацией
+
+- **Bot:** Aiogram 3- 🔍 **Фильтрация и поиск** по статусу, приоритету, тексту (debounced)
+
+- **Deployment:** Docker Compose- 📅 **Календарное представление** (React Big Calendar)
+
 - 📊 **Dashboard со статистикой**: completion rate, приоритеты, overdue задачи
-- 🎨 **Тёмная/светлая тема** с синхронизацией Telegram theme
+
+## Quick Start- 🎨 **Тёмная/светлая тема** с синхронизацией Telegram theme
+
 - 📱 **Адаптивный дизайн** для всех устройств
 
-### Технические
-- 🔐 **Telegram WebApp Authentication** (HMAC-SHA256 validation)
-- ✅ **Comprehensive Testing** (pytest, 85%+ coverage, unit + integration)
-- 📝 **Structured Logging** с request/response tracking
-- 🚀 **CI/CD Pipeline** (GitHub Actions: тесты, lint, build)
-- 🐳 **Docker контейнеризация** (production-ready compose)
-- 📚 **API Documentation** (OpenAPI/Swagger, Postman collection)
+```bash
 
-## 🏗️ Архитектура
+# 1. Setup environment### Технические
+
+cp backend/.env.example backend/.env- 🔐 **Telegram WebApp Authentication** (HMAC-SHA256 validation)
+
+cp frontend/.env.example frontend/.env- ✅ **Comprehensive Testing** (pytest, 85%+ coverage, unit + integration)
+
+cp bot/.env.example bot/.env- 📝 **Structured Logging** с request/response tracking
+
+- 🚀 **CI/CD Pipeline** (GitHub Actions: тесты, lint, build)
+
+# 2. Add your Telegram bot token to bot/.env- 🐳 **Docker контейнеризация** (production-ready compose)
+
+TELEGRAM_BOT_TOKEN=your_token_here- 📚 **API Documentation** (OpenAPI/Swagger, Postman collection)
+
+
+
+# 3. Start services## 🏗️ Архитектура
+
+docker-compose up -d --build
 
 **Backend:** FastAPI, SQLAlchemy, Alembic, PostgreSQL  
-**Frontend:** React 18, Custom hooks, CSS animations  
-**Bot:** Aiogram (WebApp button)  
+
+# 4. Apply migrations**Frontend:** React 18, Custom hooks, CSS animations  
+
+docker exec vectora-backend-1 alembic upgrade head**Bot:** Aiogram (WebApp button)  
+
 **Testing:** pytest, pytest-cov, httpx TestClient  
-**CI/CD:** GitHub Actions, Docker, Nginx
 
-## 📁 Структура проекта
+# 5. Access**CI/CD:** GitHub Actions, Docker, Nginx
 
-```
+# - Frontend: http://localhost:3000
+
+# - Backend API: http://localhost:8000## 📁 Структура проекта
+
+# - API Docs: http://localhost:8000/docs
+
+``````
+
 Vectora/
-├─ backend/              # FastAPI REST API
+
+## Project Structure├─ backend/              # FastAPI REST API
+
 │  ├─ app/
-│  │  ├─ main.py         # Application entry point с middleware
-│  │  ├─ auth.py         # Telegram WebApp authentication
-│  │  ├─ crud.py         # Database operations с filtering
-│  │  ├─ models.py       # SQLAlchemy models
-│  │  ├─ schemas.py      # Pydantic schemas (v2)
-│  │  ├─ exceptions.py   # Centralized error handling
-│  │  └─ routers/        # API endpoints
-│  ├─ tests/             # pytest test suite (85%+ coverage)
-│  ├─ migrations/        # Alembic database migrations
-│  └─ API.md             # Comprehensive API documentation
-│
-├─ frontend/             # React SPA
-│  ├─ src/
-│  │  ├─ components/
-│  │  │  ├─ TaskList.jsx     # Task management
-│  │  │  ├─ TaskFilters.jsx  # Search & filtering (debounced)
-│  │  │  ├─ TaskStats.jsx    # Dashboard statistics
-│  │  │  └─ CalendarView.jsx # Calendar interface
-│  │  └─ hooks/
-│  │     └─ useTelegramWebApp.js
-│  └─ Dockerfile
-│
+
+```│  │  ├─ main.py         # Application entry point с middleware
+
+vectora/│  │  ├─ auth.py         # Telegram WebApp authentication
+
+├── backend/          # FastAPI application│  │  ├─ crud.py         # Database operations с filtering
+
+│   ├── app/│  │  ├─ models.py       # SQLAlchemy models
+
+│   │   ├── main.py          # App entry point│  │  ├─ schemas.py      # Pydantic schemas (v2)
+
+│   │   ├── models.py        # Database models│  │  ├─ exceptions.py   # Centralized error handling
+
+│   │   ├── schemas.py       # Pydantic schemas│  │  └─ routers/        # API endpoints
+
+│   │   ├── crud.py          # Database operations│  ├─ tests/             # pytest test suite (85%+ coverage)
+
+│   │   └── routers/         # API routes│  ├─ migrations/        # Alembic database migrations
+
+│   ├── tests/               # pytest tests│  └─ API.md             # Comprehensive API documentation
+
+│   └── migrations/          # Alembic migrations│
+
+│├─ frontend/             # React SPA
+
+├── frontend/         # React application│  ├─ src/
+
+│   └── src/│  │  ├─ components/
+
+│       ├── components/      # React components│  │  │  ├─ TaskList.jsx     # Task management
+
+│       └── hooks/           # Custom hooks│  │  │  ├─ TaskFilters.jsx  # Search & filtering (debounced)
+
+││  │  │  ├─ TaskStats.jsx    # Dashboard statistics
+
+├── bot/              # Telegram bot│  │  │  └─ CalendarView.jsx # Calendar interface
+
+│   └── bot.py               # Bot logic│  │  └─ hooks/
+
+││  │     └─ useTelegramWebApp.js
+
+└── docker-compose.yml       # Docker services│  └─ Dockerfile
+
+```│
+
 ├─ bot/                  # Telegram Bot (aiogram)
-│  └─ bot.py             # WebApp button handler
+
+## Development│  └─ bot.py             # WebApp button handler
+
 │
-├─ .github/
+
+### Backend├─ .github/
+
 │  ├─ workflows/         # CI/CD pipelines
-│  │  ├─ backend-tests.yml
-│  │  ├─ frontend-lint.yml
-│  │  └─ docker-build.yml
-│  ├─ ISSUE_TEMPLATE/    # Bug & feature templates
-│  └─ PULL_REQUEST_TEMPLATE.md
-│
-├─ CONTRIBUTING.md       # Contribution guidelines
+
+```bash│  │  ├─ backend-tests.yml
+
+cd backend│  │  ├─ frontend-lint.yml
+
+python -m venv venv│  │  └─ docker-build.yml
+
+source venv/bin/activate  # or .\venv\Scripts\activate on Windows│  ├─ ISSUE_TEMPLATE/    # Bug & feature templates
+
+pip install -r requirements.txt│  └─ PULL_REQUEST_TEMPLATE.md
+
+uvicorn app.main:app --reload│
+
+```├─ CONTRIBUTING.md       # Contribution guidelines
+
 ├─ DEPLOYMENT.md         # Production deployment guide
-├─ ROADMAP.md            # Development roadmap 2025
+
+### Frontend├─ ROADMAP.md            # Development roadmap 2025
+
 └─ docker-compose.yml    # Local development setup
+
+```bash```
+
+cd frontend
+
+npm install## 🚀 Быстрый старт
+
+npm start
+
+```### 🏠 Локальный запуск (бесплатно, 5 минут)
+
+
+
+### Bot```powershell
+
+# Автоматический запуск всего проекта
+
+```bash.\start.ps1
+
+cd bot```
+
+python bot.py
+
+```Скрипт автоматически:
+
+- ✅ Проверит Docker и конфигурацию
+
+## Testing- ✅ Запустит все контейнеры (Backend, Frontend, Bot, PostgreSQL)
+
+- ✅ Применит миграции БД
+
+```bash- ✅ Настроит HTTPS туннель (localtunnel, работает в России)
+
+cd backend- ✅ Покажет инструкции для @BotFather
+
+pytest tests/ -v --cov=app
+
+```**Готово!** Откройте бота в Telegram → `/start` → Нажмите кнопку "Открыть Vectora"
+
+
+
+## Telegram Mini App Setup---
+
+
+
+1. Create bot with @BotFather### ☁️ Деплой в продакшн (GitHub Student Pack)
+
+2. Get bot token and add to `bot/.env`
+
+3. For local development, use ngrok or localtunnel:**Рекомендуем:** Railway + GitHub Pages ⭐
+
+   ```bash
+
+   npx localtunnel --port 3000```powershell
+
+   ```# Автоматический деплой на Railway + GitHub Pages
+
+4. Set Menu Button in @BotFather with your HTTPS URL.\deploy-railway.ps1
+
 ```
 
-## Быстрый старт (Docker)
+## Environment Variables
 
-1) Подготовьте переменные окружения (см. *.env.example):
-   - backend/app/.env
-   - frontend/.env
-   - bot/.env
-2) Запустите:
+**Что получите:**
 
-```powershell
-docker-compose up -d --build
+**backend/.env:**- 🚄 **Backend + Bot** на Railway (~$5/мес)
+
+```env- � **Frontend** на GitHub Pages (БЕСПЛАТНО)
+
+DATABASE_URL=postgresql://postgres:postgres@db:5432/tasks- 🎓 **GitHub Student Pack** покрывает все расходы ($100 + $5/мес)
+
+SECRET_KEY=your-secret-key- 🇷🇺 **Работает в России** без VPN
+
+TELEGRAM_BOT_TOKEN=your-bot-token- � **Авто-деплой** через GitHub Actions
+
 ```
 
-Доступы:
-- Frontend: http://localhost:3000
-- Backend API и Swagger: http://localhost:8000/docs
+**Альтернативы:**
+
+**frontend/.env:**```powershell
+
+```env# Локально — бесплатно навсегда
+
+REACT_APP_API_URL=http://localhost:8000.\start.ps1
+
+``````
+
+
+
+**bot/.env:**📚 **Полная документация:**
+
+```env- [Railway + GitHub Pages](./DEPLOYMENT_RAILWAY_PAGES.md) ⭐ Рекомендуем
+
+TELEGRAM_BOT_TOKEN=your-bot-token- [Все варианты деплоя](./DEPLOYMENT_OPTIONS_RU.md)
+
+WEBAPP_URL=https://your-app-url.com- [GitHub Student Pack](https://education.github.com/pack) — получите бонусы
+
+```
+
+### 🚀 Production развертывание
+
+## API Documentation
+
+Для полного production деплоя на VPS с HTTPS и интеграцией в Telegram смотрите **[DEPLOYMENT.md](DEPLOYMENT.md)** - пошаговая инструкция включает:
+
+Once running, visit:
+
+- Swagger UI: http://localhost:8000/docs✅ Настройку VPS (Ubuntu/Debian)  
+
+- ReDoc: http://localhost:8000/redoc✅ SSL сертификаты (Let's Encrypt)  
+
+✅ Nginx reverse proxy  
+
+## License✅ Telegram Mini App интеграцию  
+
+✅ Docker production setup  
+
+MIT✅ Мониторинг и резервное копирование  
+
+✅ Security checklist
 
 ## Переменные окружения (основное)
 
@@ -167,10 +336,12 @@ GitHub Actions автоматически запускает:
 
 ## 📚 Документация
 
-- **[API Documentation](backend/API.md)** - подробное описание всех endpoints
+- **[Quick Start (RU)](QUICK_START_RU.md)** - быстрый старт на русском (5 минут)
+- **[API Documentation](backend/API.md)** - описание REST API endpoints
 - **[Contributing Guide](CONTRIBUTING.md)** - как внести вклад в проект
-- **[Development Roadmap](ROADMAP.md)** - планы развития на 2025 год
-- **[Deployment Guide](DEPLOYMENT.md)** - production deployment пошагово
+- **[Deployment Guide](DEPLOYMENT.md)** - production развертывание на VPS
+- **[Security Guide](SECURITY.md)** - меры безопасности
+- **[Roadmap](ROADMAP.md)** - планы развития
 
 ## 🚀 Планы развития
 
@@ -225,4 +396,3 @@ MIT License - см. [LICENSE](LICENSE) для деталей
 
 ---
 
-**Сделано с ❤️ для Telegram сообщества**

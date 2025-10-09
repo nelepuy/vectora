@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, memo } from "react";
 import { 
   DndContext, 
   closestCenter, 
@@ -15,7 +15,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import "./TaskList.css";
 
-const SortableTask = ({ task, onStatusChange, onDeleteTask }) => {
+const SortableTask = memo(({ task, onStatusChange, onDeleteTask, onEditTask }) => {
   const {
     attributes,
     listeners,
@@ -75,6 +75,23 @@ const SortableTask = ({ task, onStatusChange, onDeleteTask }) => {
     }
   };
 
+  // Иконка категории
+  const getCategoryIcon = (category) => {
+    if (!category) return '📁';
+    const categoryLower = category.toLowerCase();
+    if (categoryLower.includes('работ')) return '💼';
+    if (categoryLower.includes('личн')) return '👤';
+    if (categoryLower.includes('учеб') || categoryLower.includes('образован')) return '📚';
+    if (categoryLower.includes('дом') || categoryLower.includes('быт')) return '🏠';
+    if (categoryLower.includes('здоров') || categoryLower.includes('спорт')) return '💪';
+    if (categoryLower.includes('покуп') || categoryLower.includes('магазин')) return '🛒';
+    if (categoryLower.includes('финанс') || categoryLower.includes('деньг')) return '💰';
+    if (categoryLower.includes('путеш') || categoryLower.includes('поездк')) return '✈️';
+    if (categoryLower.includes('хобби') || categoryLower.includes('творч')) return '🎨';
+    if (categoryLower.includes('семь')) return '👨‍👩‍👧‍👦';
+    return '📁';
+  };
+
   // Чекбокс — не связан с перетаскиванием
   const handleCheckboxChange = (e) => {
     e.stopPropagation();
@@ -86,11 +103,17 @@ const SortableTask = ({ task, onStatusChange, onDeleteTask }) => {
     onDeleteTask(task.id);
   };
 
+  const handleEdit = (e) => {
+    e.stopPropagation();
+    onEditTask(task);
+  };
+
   const blockDndForInteractive = (e) => {
     const target = e.target;
     if (
       target.closest?.('.task-checkbox') ||
       target.closest?.('.delete-btn') ||
+      target.closest?.('.edit-btn') ||
       target.closest?.('.task-actions')
     ) {
       e.stopPropagation();
@@ -164,27 +187,27 @@ const SortableTask = ({ task, onStatusChange, onDeleteTask }) => {
             </div>
           )}
           
-          {/* Категория и теги */}
-          <div className="task-meta">
-            {task.category && (
+          {/* Категория */}
+          {task.category && (
+            <div className="task-meta">
               <span className="task-category">
-                📁 {task.category}
+                {getCategoryIcon(task.category)} {task.category}
               </span>
-            )}
-            {task.tags && task.tags.length > 0 && (
-              <div className="task-tags">
-                {task.tags.map((tag, idx) => (
-                  <span key={idx} className="task-tag">
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
-        {/* Удаление — изолировано от DnD */}
+        {/* Действия — изолированы от DnD */}
         <div className="task-actions">
+          <button
+            className="edit-btn"
+            onClick={handleEdit}
+            onPointerDown={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            title="Редактировать задачу"
+          >
+            ✏️
+          </button>
           <button
             className="delete-btn"
             onClick={handleDelete}
@@ -198,9 +221,9 @@ const SortableTask = ({ task, onStatusChange, onDeleteTask }) => {
       </div>
     </div>
   );
-};
+});
 
-function TaskList({ theme, tasks = [], onTaskMove, onStatusChange, onDeleteTask }) {
+function TaskList({ theme, tasks = [], onTaskMove, onStatusChange, onDeleteTask, onEditTask }) {
   const [activeId, setActiveId] = useState(null);
   
   const sensors = useSensors(
@@ -234,6 +257,65 @@ function TaskList({ theme, tasks = [], onTaskMove, onStatusChange, onDeleteTask 
   // Активная задача для DragOverlay
   const activeTask = tasks.find(task => task.id === activeId);
 
+  // Группировка задач по дням (мемоизированная)
+  const groupedTasks = useMemo(() => {
+    const groups = {};
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    tasks.forEach(task => {
+      let groupKey;
+      let groupLabel;
+      let sortOrder;
+      
+      if (!task.date_time) {
+        groupKey = 'no-date';
+        groupLabel = '📌 Без срока';
+        sortOrder = new Date(8640000000000000); // Максимальная дата
+      } else {
+        const taskDate = new Date(task.date_time);
+        taskDate.setHours(0, 0, 0, 0);
+        sortOrder = taskDate;
+        
+        if (taskDate.getTime() === today.getTime()) {
+          groupKey = 'today';
+          groupLabel = '🔥 Сегодня';
+        } else if (taskDate.getTime() === tomorrow.getTime()) {
+          groupKey = 'tomorrow';
+          groupLabel = '⭐ Завтра';
+        } else if (taskDate < today) {
+          groupKey = 'overdue';
+          groupLabel = '⚠️ Просрочено';
+        } else {
+          groupKey = taskDate.toISOString();
+          groupLabel = `📅 ${taskDate.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })}`;
+        }
+      }
+
+      if (!groups[groupKey]) {
+        groups[groupKey] = { label: groupLabel, tasks: [], sortOrder: sortOrder };
+      }
+      groups[groupKey].tasks.push(task);
+    });
+
+    // Сортируем группы: просрочено, сегодня, завтра, будущие даты, без срока
+    const sortedGroups = Object.entries(groups).sort(([keyA, groupA], [keyB, groupB]) => {
+      if (keyA === 'overdue') return -1;
+      if (keyB === 'overdue') return 1;
+      if (keyA === 'today') return -1;
+      if (keyB === 'today') return 1;
+      if (keyA === 'tomorrow') return -1;
+      if (keyB === 'tomorrow') return 1;
+      if (keyA === 'no-date') return 1;
+      if (keyB === 'no-date') return -1;
+      return groupA.sortOrder - groupB.sortOrder;
+    });
+
+    return sortedGroups;
+  }, [tasks]);
+
   return (
     <div className={`tg-task-list tg-task-list-${theme}`}>
       <h2>Список задач</h2>
@@ -244,16 +326,22 @@ function TaskList({ theme, tasks = [], onTaskMove, onStatusChange, onDeleteTask 
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
-          {tasks.map((task) => (
-            <SortableTask
-              key={task.id}
-              task={task}
-              onStatusChange={onStatusChange}
-              onDeleteTask={onDeleteTask}
-            />
-          ))}
-        </SortableContext>
+        {groupedTasks.map(([groupKey, group]) => (
+          <div key={groupKey} className="task-group">
+            <h3 className="task-group-header">{group.label}</h3>
+            <SortableContext items={group.tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
+              {group.tasks.map((task) => (
+                <SortableTask
+                  key={task.id}
+                  task={task}
+                  onStatusChange={onStatusChange}
+                  onDeleteTask={onDeleteTask}
+                  onEditTask={onEditTask}
+                />
+              ))}
+            </SortableContext>
+          </div>
+        ))}
         
         {/* Визуальный оверлей при перетаскивании */}
         <DragOverlay>

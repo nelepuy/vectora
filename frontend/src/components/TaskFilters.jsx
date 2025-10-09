@@ -7,6 +7,7 @@ function TaskFilters({ onFilterChange, initialFilters = {} }) {
     search: initialFilters.search || "",
     status: initialFilters.status || "all",
     priority: initialFilters.priority || "all",
+    category: initialFilters.category || "",
   });
 
   // Дебаунс для поиска (не отправляем запрос при каждом символе)
@@ -30,14 +31,18 @@ function TaskFilters({ onFilterChange, initialFilters = {} }) {
     setFilters((prev) => ({ ...prev, priority: e.target.value }));
   };
 
+  const handleCategoryChange = (e) => {
+    setFilters((prev) => ({ ...prev, category: e.target.value }));
+  };
+
   const clearFilters = () => {
-    const clearedFilters = { search: "", status: "all", priority: "all" };
+    const clearedFilters = { search: "", status: "all", priority: "all", category: "" };
     setFilters(clearedFilters);
     onFilterChange(clearedFilters);
   };
 
   const hasActiveFilters =
-    filters.search || filters.status !== "all" || filters.priority !== "all";
+    filters.search || filters.status !== "all" || filters.priority !== "all" || filters.category;
 
   return (
     <div className="task-filters">
@@ -85,6 +90,23 @@ function TaskFilters({ onFilterChange, initialFilters = {} }) {
         <option value="normal">⚡ Средний</option>
         <option value="high">🔥 Высокий</option>
       </select>
+
+      {/* Категория */}
+      <input
+        type="text"
+        className="filter-input"
+        placeholder="📁 Категория..."
+        value={filters.category}
+        onChange={handleCategoryChange}
+        list="filter-categories-list"
+      />
+      <datalist id="filter-categories-list">
+        <option value="Работа" />
+        <option value="Личное" />
+        <option value="Учеба" />
+        <option value="Дом" />
+        <option value="Здоровье" />
+      </datalist>
 
       {/* Очистить фильтры */}
       {hasActiveFilters && (

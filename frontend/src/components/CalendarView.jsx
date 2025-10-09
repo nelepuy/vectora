@@ -18,7 +18,18 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-function CalendarView({ theme, tasks = [], onTaskMove }) {
+// Форматы времени для 24-часового формата
+const formats = {
+  timeGutterFormat: 'HH:mm',
+  eventTimeRangeFormat: ({ start, end }, culture, localizer) =>
+    `${localizer.format(start, 'HH:mm', culture)} – ${localizer.format(end, 'HH:mm', culture)}`,
+  agendaTimeRangeFormat: ({ start, end }, culture, localizer) =>
+    `${localizer.format(start, 'HH:mm', culture)} – ${localizer.format(end, 'HH:mm', culture)}`,
+  dayRangeHeaderFormat: ({ start, end }, culture, localizer) =>
+    `${localizer.format(start, 'd MMM', culture)} – ${localizer.format(end, 'd MMM', culture)}`,
+};
+
+function CalendarView({ theme, tasks = [], onTaskMove, onEditTask }) {
   const [view, setView] = useState('week');
   const [date, setDate] = useState(new Date());
 
@@ -53,6 +64,14 @@ function CalendarView({ theme, tasks = [], onTaskMove }) {
     }
   };
 
+  const handleDoubleClickEvent = (event) => {
+    // Находим оригинальную задачу по id
+    const task = tasks.find(t => t.id === event.id);
+    if (task && onEditTask) {
+      onEditTask(task);
+    }
+  };
+
   return (
     <DndContext
       sensors={sensors}
@@ -69,6 +88,8 @@ function CalendarView({ theme, tasks = [], onTaskMove }) {
           onView={setView}
           date={date}
           onNavigate={setDate}
+          onDoubleClickEvent={handleDoubleClickEvent}
+          formats={formats}
           className={`calendar-${theme}`}
           messages={{
             next: "Вперед",
