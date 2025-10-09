@@ -1,25 +1,81 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.so
-*.egg-info/
-.venv/
-venv/
-ENV/
-.env
-.env.*
+# Python# Python
 
-# FastAPI / Uvicorn
+__pycache__/__pycache__/
+
+*.py[cod]*.py[cod]
+
+*.pyo*.pyo
+
+*.pyd*.pyd
+
+*.so*.so
+
+*.egg-info/*.egg-info/
+
+.venv/.venv/
+
+venv/venv/
+
+ENV/ENV/
+
 *.log
 
-# Node / React
-node_modules/
-build/
+# SECURITY: Environment variables and secrets
+
+# Environment variables.env
+
+.env.env.*
+
+.env.*!.env.example
+
+!.env.example*.key
+
+*.pem
+
+# Node*.crt
+
+node_modules/*.cer
+
+build/*.p12
+
+dist/*.pfx
+
+npm-debug.log*secrets/
+
+yarn-debug.log*.secrets
+
+yarn-error.log*
+
+# SECURITY: Credentials and API keys
+
+# IDE / OS*credentials.json
+
+.vscode/*token.json
+
+.idea/*api_key*
+
+.DS_Store*secret_key*
+
+Thumbs.db
+
+# FastAPI / Uvicorn
+
+# Tests*.log
+
+.coverage
+
+htmlcov/# Node / React
+
+pytest_cache/node_modules/
+
+.pytest_cache/build/
+
 dist/
-.npmrc
-npm-debug.log*
+
+# Alembic.npmrc
+
+backend/migrations/versions/*.pycnpm-debug.log*
+
 yarn-debug.log*
 yarn-error.log*
 
@@ -31,10 +87,37 @@ Thumbs.db
 
 # Docker
 *.local
+
+# Documentation (keep only essential docs in repo)
+LOCAL_*.md
+ARCHITECTURE.md
+BOTFATHER_SETUP.md
+DEPLOYMENT_CHECKLIST.md
+TELEGRAM_IMPLEMENTATION_COMPLETE.md
+QUICK_START.md
+SETUP_COMPLETE_RU.md
+DEPLOYMENT_AZURE.md
 *.env.local
+
+# Deployment info files
+digitalocean-deploy-info.txt
+railway-deploy-info.txt
+azure-deploy-info.txt
+
+# Railway
+.railway/
+
+# GitHub Pages
+frontend/.env.production
 
 # Alembic
 backend/migrations/versions/*.pyc
+
+# Documentation with sensitive data
+RAILWAY_SETUP.md
+SETUP_COMPLETE_RU.md
+*_SETUP.md
+*_COMPLETE.md
 
 # Coverage / Tests
 .coverage
