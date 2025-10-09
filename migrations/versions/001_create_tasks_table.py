@@ -1,0 +1,39 @@
+"""create tasks table
+
+Revision ID: 001
+Revises: 
+Create Date: 2025-09-18 23:47:00.000000
+
+"""
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision = '001'
+down_revision = None
+branch_labels = None
+depends_on = None
+
+
+def upgrade():
+    op.create_table('tasks',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('user_id', sa.String(), nullable=True),
+        sa.Column('title', sa.String(), nullable=False),
+        sa.Column('description', sa.Text(), nullable=True),
+        sa.Column('date_time', sa.DateTime(), nullable=True),
+        sa.Column('priority', sa.String(), nullable=True),
+        sa.Column('status', sa.Boolean(), nullable=True),
+        sa.Column('position', sa.Integer(), nullable=True),
+        sa.Column('created_at', sa.DateTime(), nullable=True),
+        sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_tasks_id'), 'tasks', ['id'], unique=False)
+    op.create_index(op.f('ix_tasks_user_id'), 'tasks', ['user_id'], unique=False)
+
+
+def downgrade():
+    op.drop_index(op.f('ix_tasks_user_id'), table_name='tasks')
+    op.drop_index(op.f('ix_tasks_id'), table_name='tasks')
+    op.drop_table('tasks')

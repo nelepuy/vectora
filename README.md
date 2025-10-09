@@ -1,398 +1,211 @@
-# Vectora - Telegram Mini App Task Manager# 📋 Vectora — Telegram Mini App Task Manager
+# Vectora Backend (FastAPI)
 
+Бэкенд для Telegram Mini App на FastAPI + SQLAlchemy + PostgreSQL с поддержкой аутентификации через Telegram WebApp.
 
+## ✨ Возможности
 
-Task management application built as a Telegram Mini App.Modern task manager as a Telegram Mini App with FastAPI backend and React frontend.
+- ✅ **CRUD API для задач** с поддержкой фильтрации и поиска
+- ✅ **Telegram аутентификация** через initData
+- ✅ **Автодокументация** Swagger UI (`/docs`) и ReDoc (`/redoc`)
+- ✅ **Пагинация и фильтрация** задач
+- ✅ **Структурированное логирование**
+- ✅ **Централизованная обработка ошибок**
+- ✅ **Unit и интеграционные тесты**
+- ✅ **Настраиваемый CORS**
 
+## 🚀 Быстрый старт
 
+### Локальная разработка
 
-## Stack## ✨ Возможности
-
-
-
-- **Backend:** FastAPI, PostgreSQL, SQLAlchemy, Alembic### Основные
-
-- **Frontend:** React 18, Telegram WebApp SDK- 📝 **CRUD операции** для задач с полной валидацией
-
-- **Bot:** Aiogram 3- 🔍 **Фильтрация и поиск** по статусу, приоритету, тексту (debounced)
-
-- **Deployment:** Docker Compose- 📅 **Календарное представление** (React Big Calendar)
-
-- 📊 **Dashboard со статистикой**: completion rate, приоритеты, overdue задачи
-
-## Quick Start- 🎨 **Тёмная/светлая тема** с синхронизацией Telegram theme
-
-- 📱 **Адаптивный дизайн** для всех устройств
-
-```bash
-
-# 1. Setup environment### Технические
-
-cp backend/.env.example backend/.env- 🔐 **Telegram WebApp Authentication** (HMAC-SHA256 validation)
-
-cp frontend/.env.example frontend/.env- ✅ **Comprehensive Testing** (pytest, 85%+ coverage, unit + integration)
-
-cp bot/.env.example bot/.env- 📝 **Structured Logging** с request/response tracking
-
-- 🚀 **CI/CD Pipeline** (GitHub Actions: тесты, lint, build)
-
-# 2. Add your Telegram bot token to bot/.env- 🐳 **Docker контейнеризация** (production-ready compose)
-
-TELEGRAM_BOT_TOKEN=your_token_here- 📚 **API Documentation** (OpenAPI/Swagger, Postman collection)
-
-
-
-# 3. Start services## 🏗️ Архитектура
-
-docker-compose up -d --build
-
-**Backend:** FastAPI, SQLAlchemy, Alembic, PostgreSQL  
-
-# 4. Apply migrations**Frontend:** React 18, Custom hooks, CSS animations  
-
-docker exec vectora-backend-1 alembic upgrade head**Bot:** Aiogram (WebApp button)  
-
-**Testing:** pytest, pytest-cov, httpx TestClient  
-
-# 5. Access**CI/CD:** GitHub Actions, Docker, Nginx
-
-# - Frontend: http://localhost:3000
-
-# - Backend API: http://localhost:8000## 📁 Структура проекта
-
-# - API Docs: http://localhost:8000/docs
-
-``````
-
-Vectora/
-
-## Project Structure├─ backend/              # FastAPI REST API
-
-│  ├─ app/
-
-```│  │  ├─ main.py         # Application entry point с middleware
-
-vectora/│  │  ├─ auth.py         # Telegram WebApp authentication
-
-├── backend/          # FastAPI application│  │  ├─ crud.py         # Database operations с filtering
-
-│   ├── app/│  │  ├─ models.py       # SQLAlchemy models
-
-│   │   ├── main.py          # App entry point│  │  ├─ schemas.py      # Pydantic schemas (v2)
-
-│   │   ├── models.py        # Database models│  │  ├─ exceptions.py   # Centralized error handling
-
-│   │   ├── schemas.py       # Pydantic schemas│  │  └─ routers/        # API endpoints
-
-│   │   ├── crud.py          # Database operations│  ├─ tests/             # pytest test suite (85%+ coverage)
-
-│   │   └── routers/         # API routes│  ├─ migrations/        # Alembic database migrations
-
-│   ├── tests/               # pytest tests│  └─ API.md             # Comprehensive API documentation
-
-│   └── migrations/          # Alembic migrations│
-
-│├─ frontend/             # React SPA
-
-├── frontend/         # React application│  ├─ src/
-
-│   └── src/│  │  ├─ components/
-
-│       ├── components/      # React components│  │  │  ├─ TaskList.jsx     # Task management
-
-│       └── hooks/           # Custom hooks│  │  │  ├─ TaskFilters.jsx  # Search & filtering (debounced)
-
-││  │  │  ├─ TaskStats.jsx    # Dashboard statistics
-
-├── bot/              # Telegram bot│  │  │  └─ CalendarView.jsx # Calendar interface
-
-│   └── bot.py               # Bot logic│  │  └─ hooks/
-
-││  │     └─ useTelegramWebApp.js
-
-└── docker-compose.yml       # Docker services│  └─ Dockerfile
-
-```│
-
-├─ bot/                  # Telegram Bot (aiogram)
-
-## Development│  └─ bot.py             # WebApp button handler
-
-│
-
-### Backend├─ .github/
-
-│  ├─ workflows/         # CI/CD pipelines
-
-```bash│  │  ├─ backend-tests.yml
-
-cd backend│  │  ├─ frontend-lint.yml
-
-python -m venv venv│  │  └─ docker-build.yml
-
-source venv/bin/activate  # or .\venv\Scripts\activate on Windows│  ├─ ISSUE_TEMPLATE/    # Bug & feature templates
-
-pip install -r requirements.txt│  └─ PULL_REQUEST_TEMPLATE.md
-
-uvicorn app.main:app --reload│
-
-```├─ CONTRIBUTING.md       # Contribution guidelines
-
-├─ DEPLOYMENT.md         # Production deployment guide
-
-### Frontend├─ ROADMAP.md            # Development roadmap 2025
-
-└─ docker-compose.yml    # Local development setup
-
-```bash```
-
-cd frontend
-
-npm install## 🚀 Быстрый старт
-
-npm start
-
-```### 🏠 Локальный запуск (бесплатно, 5 минут)
-
-
-
-### Bot```powershell
-
-# Автоматический запуск всего проекта
-
-```bash.\start.ps1
-
-cd bot```
-
-python bot.py
-
-```Скрипт автоматически:
-
-- ✅ Проверит Docker и конфигурацию
-
-## Testing- ✅ Запустит все контейнеры (Backend, Frontend, Bot, PostgreSQL)
-
-- ✅ Применит миграции БД
-
-```bash- ✅ Настроит HTTPS туннель (localtunnel, работает в России)
-
-cd backend- ✅ Покажет инструкции для @BotFather
-
-pytest tests/ -v --cov=app
-
-```**Готово!** Откройте бота в Telegram → `/start` → Нажмите кнопку "Открыть Vectora"
-
-
-
-## Telegram Mini App Setup---
-
-
-
-1. Create bot with @BotFather### ☁️ Деплой в продакшн (GitHub Student Pack)
-
-2. Get bot token and add to `bot/.env`
-
-3. For local development, use ngrok or localtunnel:**Рекомендуем:** Railway + GitHub Pages ⭐
-
-   ```bash
-
-   npx localtunnel --port 3000```powershell
-
-   ```# Автоматический деплой на Railway + GitHub Pages
-
-4. Set Menu Button in @BotFather with your HTTPS URL.\deploy-railway.ps1
-
-```
-
-## Environment Variables
-
-**Что получите:**
-
-**backend/.env:**- 🚄 **Backend + Bot** на Railway (~$5/мес)
-
-```env- � **Frontend** на GitHub Pages (БЕСПЛАТНО)
-
-DATABASE_URL=postgresql://postgres:postgres@db:5432/tasks- 🎓 **GitHub Student Pack** покрывает все расходы ($100 + $5/мес)
-
-SECRET_KEY=your-secret-key- 🇷🇺 **Работает в России** без VPN
-
-TELEGRAM_BOT_TOKEN=your-bot-token- � **Авто-деплой** через GitHub Actions
-
-```
-
-**Альтернативы:**
-
-**frontend/.env:**```powershell
-
-```env# Локально — бесплатно навсегда
-
-REACT_APP_API_URL=http://localhost:8000.\start.ps1
-
-``````
-
-
-
-**bot/.env:**📚 **Полная документация:**
-
-```env- [Railway + GitHub Pages](./DEPLOYMENT_RAILWAY_PAGES.md) ⭐ Рекомендуем
-
-TELEGRAM_BOT_TOKEN=your-bot-token- [Все варианты деплоя](./DEPLOYMENT_OPTIONS_RU.md)
-
-WEBAPP_URL=https://your-app-url.com- [GitHub Student Pack](https://education.github.com/pack) — получите бонусы
-
-```
-
-### 🚀 Production развертывание
-
-## API Documentation
-
-Для полного production деплоя на VPS с HTTPS и интеграцией в Telegram смотрите **[DEPLOYMENT.md](DEPLOYMENT.md)** - пошаговая инструкция включает:
-
-Once running, visit:
-
-- Swagger UI: http://localhost:8000/docs✅ Настройку VPS (Ubuntu/Debian)  
-
-- ReDoc: http://localhost:8000/redoc✅ SSL сертификаты (Let's Encrypt)  
-
-✅ Nginx reverse proxy  
-
-## License✅ Telegram Mini App интеграцию  
-
-✅ Docker production setup  
-
-MIT✅ Мониторинг и резервное копирование  
-
-✅ Security checklist
-
-## Переменные окружения (основное)
-
-Backend (`backend/app/.env`):
-```
-DATABASE_URL=postgresql://postgres:postgres@db:5432/tasks
-JWT_SECRET=change-me
-BACKEND_CORS_ORIGINS=https://your-frontend-domain.com
-BACKEND_CORS_REGEX=
-```
-
-Frontend (`frontend/.env`):
-```
-# В проде лучше проксировать /api через тот же домен
-REACT_APP_API_URL=http://localhost:8000
-```
-
-Bot (`bot/.env`):
-```
-TELEGRAM_BOT_TOKEN=your-telegram-bot-token   # НЕ коммитить
-WEBAPP_URL=https://your-frontend-domain.com  # Публичный URL Mini App
-```
-
-## Локальная разработка (без Docker)
-
-Backend:
 ```powershell
 cd backend
-python -m venv venv; .\venv\Scripts\activate
+python -m venv venv
+.\venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-Frontend:
+API будет доступно на http://localhost:8000
+
+### Docker
+
 ```powershell
-cd frontend
-npm install
-npm start
+docker-compose up -d backend
 ```
 
-Bot:
-```powershell
-cd bot
-python bot.py
+## 📁 Структура проекта
+
+```
+backend/
+├── app/
+│   ├── routers/          # API endpoints
+│   │   └── tasks.py      # CRUD операции с задачами
+│   ├── auth.py           # Telegram аутентификация
+│   ├── crud.py           # Операции с БД
+│   ├── database.py       # Подключение к PostgreSQL
+│   ├── exceptions.py     # Кастомные исключения
+│   ├── logging_config.py # Настройка логирования
+│   ├── main.py           # FastAPI приложение
+│   ├── models.py         # SQLAlchemy модели
+│   ├── schemas.py        # Pydantic схемы
+│   └── settings.py       # Конфигурация
+├── migrations/           # Alembic миграции
+├── tests/               # Тесты
+│   ├── conftest.py      # Pytest fixtures
+│   ├── test_api.py      # API тесты
+│   ├── test_auth.py     # Тесты аутентификации
+│   └── test_crud.py     # CRUD тесты
+├── requirements.txt     # Зависимости
+├── pytest.ini          # Конфигурация pytest
+└── API.md              # Документация API
+```
+
+## ⚙️ Переменные окружения
+
+Создайте `app/.env` на основе `.env.example`:
+
+```env
+# Режим разработки
+DEBUG=true
+
+# База данных
+DATABASE_URL=postgresql://postgres:postgres@db:5432/tasks
+
+# CORS (разделённые запятыми домены)
+BACKEND_CORS_ORIGINS=http://localhost:3000,https://your-app.com
+
+# Telegram Bot Token (обязательно для продакшена)
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token-here
 ```
 
 ## 🧪 Тестирование
 
-### Backend тесты
+### Запуск всех тестов
 
 ```powershell
-cd backend
-pytest tests/ -v --cov=app --cov-report=html
+# Windows
+.\run_tests.ps1
+
+# Linux/Mac
+./run_tests.sh
 ```
 
-**Test Coverage:**
-- ✅ Authentication (Telegram initData validation)
-- ✅ CRUD operations (create, read, update, delete)
-- ✅ Filtering & search (status, priority, text search)
-- ✅ Pagination (skip/limit)
-- ✅ User isolation (multi-tenant security)
-- ✅ Integration tests (full API flow)
+### Запуск конкретных тестов
 
-### CI/CD
+```powershell
+pytest tests/test_api.py -v
+pytest tests/test_crud.py::test_create_task -v
+```
 
-GitHub Actions автоматически запускает:
-- Backend тесты с PostgreSQL
-- Frontend lint & build
-- Docker image builds
-- Coverage reporting
+### Тесты с покрытием
 
-## 📚 Документация
+```powershell
+pytest --cov=app --cov-report=html
+```
 
-- **[Quick Start (RU)](QUICK_START_RU.md)** - быстрый старт на русском (5 минут)
-- **[API Documentation](backend/API.md)** - описание REST API endpoints
-- **[Contributing Guide](CONTRIBUTING.md)** - как внести вклад в проект
-- **[Deployment Guide](DEPLOYMENT.md)** - production развертывание на VPS
-- **[Security Guide](SECURITY.md)** - меры безопасности
-- **[Roadmap](ROADMAP.md)** - планы развития
+Отчёт будет в `htmlcov/index.html`
 
-## 🚀 Планы развития
+## 📊 API Endpoints
 
-**v0.3.0 (Q1 2025):**
-- 🏷️ Категории и теги для задач
-- 🔔 Уведомления через Telegram Bot
-- 📊 Расширенная аналитика
+### Основные
 
-**v0.4.0 (Q2 2025):**
-- 📝 Подзадачи (subtasks)
-- 🔁 Повторяющиеся задачи
-- 📱 PWA функциональность
+- `GET /health` — Healthcheck
+- `GET /version` — Версия API
+- `GET /docs` — Swagger UI
+- `GET /redoc` — ReDoc документация
 
-Полный roadmap: [ROADMAP.md](ROADMAP.md)
+### Задачи
 
-## 🤝 Вклад в проект
+- `GET /tasks/` — Список задач с фильтрацией
+- `GET /tasks/{id}` — Получить задачу
+- `POST /tasks/` — Создать задачу
+- `PUT /tasks/{id}` — Обновить задачу
+- `DELETE /tasks/{id}` — Удалить задачу
 
-Мы приветствуем контрибьюции! Пожалуйста, прочитайте [CONTRIBUTING.md](CONTRIBUTING.md) для деталей.
+**Параметры фильтрации:**
+- `skip`, `limit` — пагинация
+- `status` — фильтр по статусу (true/false)
+- `priority` — фильтр по приоритету (low/normal/high)
+- `search` — поиск по названию и описанию
 
-### Quick Start для контрибьюторов
+Подробная документация в [API.md](API.md)
 
-1. Fork репозитория
-2. Создайте feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit изменения (`git commit -m 'feat: добавлена классная фича'`)
-4. Push в branch (`git push origin feature/AmazingFeature`)
-5. Откройте Pull Request
+## 🔐 Аутентификация
 
-**Code Style:**
-- Backend: PEP 8, black formatter, type hints
-- Frontend: ESLint, Prettier
-- Commits: [Conventional Commits](https://www.conventionalcommits.org/)
+API использует Telegram WebApp initData для аутентификации.
 
-## 🔒 Безопасность
+**Заголовок запроса:**
+```
+X-Telegram-Init-Data: <initData из window.Telegram.WebApp>
+```
 
-- ✅ HTTPS обязателен для production
-- ✅ Telegram initData HMAC-SHA256 validation
-- ✅ CORS настроен через environment variables
-- ✅ SQL injection защита (SQLAlchemy ORM)
-- ✅ Rate limiting (можно добавить slowapi)
-- ✅ Environment secrets (не храним в git)
+В режиме `DEBUG=true` аутентификация не требуется (используется test_user).
 
-Для production deployment см. [DEPLOYMENT.md](DEPLOYMENT.md)
+## 🗄️ Миграции базы данных
 
-## 📜 Лицензия
+```powershell
+# Применить миграции
+alembic upgrade head
 
-MIT License - см. [LICENSE](LICENSE) для деталей
+# Создать новую миграцию
+alembic revision --autogenerate -m "описание изменений"
 
-## 💬 Поддержка
+# Откатить последнюю миграцию
+alembic downgrade -1
+```
 
-- **Issues:** [GitHub Issues](https://github.com/nelepuy/vectora/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/nelepuy/vectora/discussions)
+## 📝 Логирование
 
----
+Логи выводятся в stdout в формате:
+```
+2025-10-07 10:00:00 - vectora - INFO - Запрос: GET /tasks/
+```
 
+Уровень логирования зависит от `DEBUG`:
+- `DEBUG=true` → уровень DEBUG
+- `DEBUG=false` → уровень INFO
+
+## 🚀 Деплой
+
+### Продакшен чеклист
+
+1. ✅ Установите `DEBUG=false`
+2. ✅ Укажите реальный `TELEGRAM_BOT_TOKEN`
+3. ✅ Настройте `BACKEND_CORS_ORIGINS` на ваши домены
+4. ✅ Используйте надёжный `DATABASE_URL` (не localhost)
+5. ✅ Запускайте за HTTPS (Nginx/Traefik)
+6. ✅ Настройте мониторинг и алерты
+
+### Docker production
+
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+## 🤝 Разработка
+
+### Добавление новых endpoint'ов
+
+1. Создайте router в `app/routers/`
+2. Добавьте CRUD функции в `app/crud.py`
+3. Определите Pydantic схемы в `app/schemas.py`
+4. Подключите router в `app/main.py`
+5. Напишите тесты в `tests/`
+
+### Code style
+
+- Следуйте PEP 8
+- Используйте type hints
+- Документируйте функции docstring'ами
+- Пишите тесты для новой функциональности
+
+## 📚 Дополнительная информация
+
+- [API документация](API.md)
+- [Alembic миграции](migrations/)
+- [Примеры тестов](tests/)

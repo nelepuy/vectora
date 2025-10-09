@@ -1,0 +1,25 @@
+[tool.pylint.main]
+# Python version
+py-version = "3.11"
+
+# Paths to ignore
+ignore = ["migrations", ".venv", "venv", "__pycache__", ".mypy_cache", ".pytest_cache"]
+
+[tool.pylint.messages_control]
+# Disable specific warnings
+disable = [
+    "C0111",  # missing-docstring
+    "R0903",  # too-few-public-methods
+    "R0913",  # too-many-arguments
+]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.design]
+max-args = 10
+max-attributes = 15
+
+[tool.pylint.security]
+# Enable security checks
+enable = ["use-of-exec", "use-of-eval"]
