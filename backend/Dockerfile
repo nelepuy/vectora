@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
 # CACHEBUST для принудительной пересборки на Railway
-ARG CACHEBUST=20250111_001
+ARG CACHEBUST=20250111_002_CORS_FIX
 RUN echo "Build cache bust: $CACHEBUST"
 
 WORKDIR /app
