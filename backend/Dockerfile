@@ -1,5 +1,9 @@
 FROM python:3.11-slim
 
+# CACHEBUST для принудительной пересборки на Railway
+ARG CACHEBUST=20250111_001
+RUN echo "Build cache bust: $CACHEBUST"
+
 WORKDIR /app
 
 # Устанавливаем зависимости
