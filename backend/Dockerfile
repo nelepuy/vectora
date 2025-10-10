@@ -9,7 +9,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем остальные файлы
 COPY . /app
 
-EXPOSE 8080
+# Делаем entrypoint исполняемым
+RUN chmod +x entrypoint.py
 
-# Прямой запуск uvicorn без bash скрипта
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
+# Railway автоматически установит переменную PORT
+CMD ["python3", "entrypoint.py"]
