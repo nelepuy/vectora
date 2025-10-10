@@ -93,11 +93,12 @@ app.add_middleware(
 )
 
 # Trusted Host Middleware - защита от Host header attacks
-if not settings.debug:
-    app.add_middleware(
-        TrustedHostMiddleware,
-        allowed_hosts=["localhost", "127.0.0.1", "*.yourdomain.com"]
-    )
+# ОТКЛЮЧЕНО для Railway, так как Railway использует внутренний прокси
+# if not settings.debug:
+#     app.add_middleware(
+#         TrustedHostMiddleware,
+#         allowed_hosts=["localhost", "127.0.0.1", "*.railway.app", "*.up.railway.app"]
+#     )
 
 # Подключаем роутеры
 app.include_router(auth.router)
@@ -109,6 +110,8 @@ async def startup_event():
     """Действия при запуске приложения."""
     logger.info(f"{APP_NAME} v{APP_VERSION} запускается...")
     logger.info(f"Режим отладки: {settings.debug}")
+    logger.info(f"CORS Origins: {allow_origins}")
+    logger.info(f"Database URL: {settings.database_url[:30]}...")
 
 
 @app.on_event("shutdown")
