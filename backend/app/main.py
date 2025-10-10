@@ -80,16 +80,15 @@ if isinstance(origins_setting, str):
 else:
     allow_origins = origins_setting or []
 
-# CORS: строгие настройки для продакшна
+# CORS: ВРЕМЕННО открыты все origins для тестирования Railway
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allow_origins,
-    allow_origin_regex=settings.backend_cors_regex,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Только нужные методы
-    allow_headers=["Content-Type", "Authorization", "Accept"],  # Только нужные headers
-    expose_headers=["Content-Type"],
-    max_age=600,  # Кэш preflight запросов на 10 минут
+    allow_origins=["*"],  # ВРЕМЕННО: разрешаем все origins
+    allow_credentials=False,  # Должно быть False когда allow_origins=["*"]
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=600,
 )
 
 # Trusted Host Middleware - защита от Host header attacks
