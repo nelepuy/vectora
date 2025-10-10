@@ -9,4 +9,4 @@ echo "🔄 Применяю миграции базы данных..."
 alembic upgrade head
 
 echo "🚀 Запускаю сервер на порту ${PORT:-8080}..."
-exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080} --log-level info
+exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080} --log-level info --forwarded-allow-ips='*' --proxy-headers
