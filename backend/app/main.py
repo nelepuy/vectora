@@ -37,25 +37,30 @@ if isinstance(origins_setting, str):
 else:
     allow_origins = origins_setting or []
 
-# CORS: ВРЕМЕННО открыты все origins для тестирования Railway
-# ВАЖНО: CORS middleware должен быть ПЕРВЫМ, чтобы заголовки добавлялись даже при ошибках!
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # ВРЕМЕННО: разрешаем все origins
-    allow_credentials=False,  # Должно быть False когда allow_origins=["*"]
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=600,
-)
 
-
-# Middleware для добавления security headers
+# Middleware для CORS И security headers - должен быть ПЕРВЫМ!
 @app.middleware("http")
-async def add_security_headers(request: Request, call_next):
-    response = await call_next(request)
+async def add_cors_and_security_headers(request: Request, call_next):
+    # Обрабатываем preflight OPTIONS запросы
+    if request.method == "OPTIONS":
+        response = JSONResponse(content={}, status_code=200)
+    else:
+        try:
+            response = await call_next(request)
+        except Exception as e:
+            logger.error(f"Ошибка в middleware: {str(e)}")
+            response = JSONResponse(
+                content={"detail": "Internal server error"},
+                status_code=500
+            )
     
-    # Добавляем security headers
+    # CORS заголовки - ВРЕМЕННО разрешаем всё
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Max-Age"] = "600"
+    
+    # Security headers
     security_headers = SecurityHeaders.get_secure_headers()
     for header, value in security_headers.items():
         response.headers[header] = value
