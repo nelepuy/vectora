@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/vectora/static/css/main.b59576dd.css",
+    "main.js": "/vectora/static/js/main.5b7ad0c6.js",
+    "index.html": "/vectora/index.html",
+    "main.b59576dd.css.map": "/vectora/static/css/main.b59576dd.css.map",
+    "main.5b7ad0c6.js.map": "/vectora/static/js/main.5b7ad0c6.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b59576dd.css",
+    "static/js/main.5b7ad0c6.js"
+  ]
+}

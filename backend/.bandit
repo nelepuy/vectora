@@ -1,0 +1,74 @@
+[bandit]
+# Bandit - инструмент для поиска уязвимостей безопасности в Python коде
+exclude_dirs = [
+    '/tests',
+    '/migrations',
+    '/.venv',
+    '/venv',
+    '__pycache__'
+]
+
+# Тесты для проверки
+tests = [
+    'B201',  # Flask debug mode
+    'B301',  # Pickle
+    'B302',  # marshal
+    'B303',  # MD5 or SHA1
+    'B304',  # Insecure ciphers
+    'B305',  # Insecure cipher modes
+    'B306',  # tempfile.mktemp
+    'B307',  # eval
+    'B308',  # mark_safe
+    'B309',  # HTTPSConnection
+    'B310',  # urllib.urlopen
+    'B311',  # random
+    'B312',  # telnetlib
+    'B313',  # XML libraries
+    'B314',  # XML libraries
+    'B315',  # XML libraries
+    'B316',  # XML libraries
+    'B317',  # XML libraries
+    'B318',  # XML libraries
+    'B319',  # XML libraries
+    'B320',  # XML libraries
+    'B321',  # FTP
+    'B322',  # Input
+    'B323',  # unverified context
+    'B324',  # hashlib
+    'B401',  # import telnetlib
+    'B402',  # import ftplib
+    'B403',  # import pickle
+    'B404',  # import subprocess
+    'B405',  # import xml
+    'B406',  # import xml
+    'B407',  # import xml
+    'B408',  # import xml
+    'B409',  # import xml
+    'B410',  # import xml
+    'B411',  # import random
+    'B412',  # import json
+    'B413',  # import pycrypto
+    'B501',  # request with verify=False
+    'B502',  # SSL with bad version
+    'B503',  # SSL with bad defaults
+    'B504',  # SSL with no version
+    'B505',  # weak cryptographic key
+    'B506',  # yaml load
+    'B507',  # SSH no host key verification
+    'B601',  # paramiko
+    'B602',  # shell=True
+    'B603',  # subprocess without shell
+    'B604',  # shell=True
+    'B605',  # shell command
+    'B606',  # no shell
+    'B607',  # partial path
+    'B608',  # SQL injection
+    'B609',  # wildcard injection
+    'B610',  # django SQL injection
+    'B611',  # django SQL injection
+    'B701',  # jinja2 autoescape
+    'B702',  # mako templates
+    'B703',  # flask debug
+]
+
+skips = []
