@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
@@ -129,9 +129,12 @@ async def shutdown_event():
 
 
 @app.get("/health")
-def health() -> dict:
+def health(response: Response) -> dict:
     """Проверка доступности сервиса (healthcheck)."""
-    return {"status": "ok"}
+    # ОТЛАДКА: добавляем CORS заголовки прямо здесь
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["X-Debug-CORS-Direct"] = "YES"
+    return {"status": "ok", "cors_test": "direct_headers"}
 
 
 @app.get("/version")
