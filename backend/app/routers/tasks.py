@@ -26,7 +26,7 @@ def read_tasks(
     tag: Optional[str] = Query(None, description="Фильтр по тегу"),
     sort_by: Optional[str] = Query("position", description="Сортировка (position/date/priority/title)"),
     db: Session = Depends(get_db),
-    user_id: str = Depends(get_current_user)
+    user_id: int = Depends(get_current_user)
 ):
     """
     Получить список задач с фильтрацией и пагинацией.
@@ -58,7 +58,7 @@ def read_tasks(
 def read_task(
     task_id: int,
     db: Session = Depends(get_db),
-    user_id: str = Depends(get_current_user)
+    user_id: int = Depends(get_current_user)
 ):
     """Получить задачу по ID."""
     return crud.get_task_by_id(db, task_id, user_id)
@@ -68,7 +68,7 @@ def read_task(
 def create_task(
     task: schemas.TaskCreate,
     db: Session = Depends(get_db),
-    user_id: str = Depends(get_current_user)
+    user_id: int = Depends(get_current_user)
 ):
     """Создать новую задачу."""
     return crud.create_task(db, task, user_id)
@@ -79,7 +79,7 @@ def update_task(
     task_id: int,
     task: schemas.TaskUpdate,
     db: Session = Depends(get_db),
-    user_id: str = Depends(get_current_user)
+    user_id: int = Depends(get_current_user)
 ):
     """Обновить задачу."""
     return crud.update_task(db, task_id, task, user_id)
@@ -89,7 +89,7 @@ def update_task(
 def delete_task(
     task_id: int,
     db: Session = Depends(get_db),
-    user_id: str = Depends(get_current_user)
+    user_id: int = Depends(get_current_user)
 ):
     """Удалить задачу."""
     crud.delete_task(db, task_id, user_id)
@@ -99,7 +99,7 @@ def delete_task(
 @router.get("/metadata/categories", response_model=List[str])
 def get_categories(
     db: Session = Depends(get_db),
-    user_id: str = Depends(get_current_user)
+    user_id: int = Depends(get_current_user)
 ):
     """Получить список всех категорий пользователя."""
     return crud.get_categories(db, user_id)
@@ -108,7 +108,7 @@ def get_categories(
 @router.get("/metadata/tags", response_model=List[str])
 def get_tags(
     db: Session = Depends(get_db),
-    user_id: str = Depends(get_current_user)
+    user_id: int = Depends(get_current_user)
 ):
     """Получить список всех тегов пользователя."""
     return crud.get_all_tags(db, user_id)

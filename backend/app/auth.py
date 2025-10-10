@@ -79,7 +79,7 @@ def verify_telegram_init_data(init_data: str, bot_token: str) -> dict:
 
 async def get_current_user(
     x_telegram_init_data: Optional[str] = Header(None, alias="X-Telegram-Init-Data")
-) -> str:
+) -> int:
     """
     Dependency для получения текущего пользователя из заголовка.
     
@@ -87,11 +87,11 @@ async def get_current_user(
     В продакшене обязательно проверяет подпись Telegram.
     
     Returns:
-        user_id как строка
+        user_id как integer
     """
     # В режиме разработки можно пропустить аутентификацию
     if settings.debug and not x_telegram_init_data:
-        return "123456789"  # Тестовый user_id как строка (будет преобразован в int)
+        return 123456789  # Тестовый user_id
     
     if not x_telegram_init_data:
         raise HTTPException(
@@ -108,7 +108,7 @@ async def get_current_user(
         )
     
     user_info = verify_telegram_init_data(x_telegram_init_data, bot_token)
-    return user_info['user_id']
+    return int(user_info['user_id'])  # Преобразуем в int
 
 
 async def get_current_user_optional(
