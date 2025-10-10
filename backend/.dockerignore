@@ -1,0 +1,19 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.env
+.venv
+venv/
+ENV/
+.git
+.gitignore
+*.md
+.vscode
+.idea
+.pytest_cache
+htmlcov/
+.coverage
+# FORCE REBUILD 2025-01-11-23:55
