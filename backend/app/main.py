@@ -54,6 +54,9 @@ async def add_cors_and_security_headers(request: Request, call_next):
                 status_code=500
             )
     
+    # ОТЛАДКА: проверяем что наш код работает
+    response.headers["X-Custom-Middleware-Active"] = "YES"
+    
     # CORS заголовки - ВРЕМЕННО разрешаем всё
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Methods"] = "*"
