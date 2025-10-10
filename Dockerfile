@@ -1,5 +1,8 @@
 FROM python:3.11-slim
 
+# Cache buster - изменение этого значения заставит пересобрать всё
+ARG CACHEBUST=2025-10-10-v2
+
 WORKDIR /app
 
 # Копируем только requirements сначала для кэширования слоя
