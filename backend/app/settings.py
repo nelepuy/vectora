@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     rate_limit_per_hour: int = 1000
 
     # CORS - строгие настройки для продакшна
-    backend_cors_origins: Optional[str] = "http://localhost:3000,http://localhost:8000"
+    backend_cors_origins: Optional[str] = "http://localhost:3000,http://localhost:8000,https://nelepuy.github.io"
     backend_cors_regex: Optional[str] = None
     
     # Telegram
