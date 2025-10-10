@@ -91,7 +91,7 @@ async def get_current_user(
     """
     # В режиме разработки можно пропустить аутентификацию
     if settings.debug and not x_telegram_init_data:
-        return "test_user"
+        return "123456789"  # Тестовый user_id как строка (будет преобразован в int)
     
     if not x_telegram_init_data:
         raise HTTPException(
