@@ -1,0 +1,4 @@
+FORCE REBUILD - 2025-01-11 23:47 UTC
+This file forces Railway to rebuild the container
+Commit: 6bfd6f7
+Issue: CORS headers not being added
