@@ -9,5 +9,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем остальные файлы
 COPY . /app
 
-# Используем uvicorn с оптимизированными настройками
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+# Делаем скрипт запуска исполняемым
+RUN chmod +x start.sh
+
+# Используем скрипт запуска с миграциями
+CMD ["./start.sh"]
