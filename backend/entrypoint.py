@@ -23,5 +23,7 @@ os.execvp("uvicorn", [
     "uvicorn",
     "app.main:app",
     "--host", "0.0.0.0",
-    "--port", port
+    "--port", port,
+    "--forwarded-allow-ips", "*",
+    "--proxy-headers"
 ])
