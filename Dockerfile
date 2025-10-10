@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
 # Cache buster - изменение этого значения заставит пересобрать всё
-ARG CACHEBUST=2025-10-10-v2
+ARG CACHEBUST=2025-10-10-v3-force-rebuild
 
 WORKDIR /app
 
