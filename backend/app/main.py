@@ -30,6 +30,25 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+# Преобразуем CORS-оригины к списку строк (в .env может быть одна строка или JSON-массив)
+origins_setting = settings.backend_cors_origins
+if isinstance(origins_setting, str):
+    allow_origins = [o.strip() for o in origins_setting.split(",") if o.strip()]
+else:
+    allow_origins = origins_setting or []
+
+# CORS: ВРЕМЕННО открыты все origins для тестирования Railway
+# ВАЖНО: CORS middleware должен быть ПЕРВЫМ, чтобы заголовки добавлялись даже при ошибках!
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # ВРЕМЕННО: разрешаем все origins
+    allow_credentials=False,  # Должно быть False когда allow_origins=["*"]
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=600,
+)
+
 
 # Middleware для добавления security headers
 @app.middleware("http")
@@ -72,24 +91,6 @@ async def vectora_exception_handler(request: Request, exc: VectoraException):
         status_code=exc.status_code,
         content={"detail": exc.detail}
     )
-
-# Преобразуем CORS-оригины к списку строк (в .env может быть одна строка или JSON-массив)
-origins_setting = settings.backend_cors_origins
-if isinstance(origins_setting, str):
-    allow_origins = [o.strip() for o in origins_setting.split(",") if o.strip()]
-else:
-    allow_origins = origins_setting or []
-
-# CORS: ВРЕМЕННО открыты все origins для тестирования Railway
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # ВРЕМЕННО: разрешаем все origins
-    allow_credentials=False,  # Должно быть False когда allow_origins=["*"]
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=600,
-)
 
 # Trusted Host Middleware - защита от Host header attacks
 # ОТКЛЮЧЕНО для Railway, так как Railway использует внутренний прокси
