@@ -1,14 +1,16 @@
 FROM python:3.11-slim
 
-# ФОРСИРУЕМ ПОЛНУЮ ПЕРЕСБОРКУ
-ARG CACHEBUST=final-rebuild-171920-no-cache
+# НОВЫЙ CACHEBUST ДЛЯ НОВОГО СЕРВИСА
+ARG CACHEBUST=new-service-20251010-173950
 
 WORKDIR /app
 
+# Устанавливаем зависимости
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Копируем код
 COPY . /app
 
-# ПРОСТАЯ ВЕРСИЯ БЕЗ ВСЕХ MIDDLEWARE
-CMD ["uvicorn", "app.main_simple:app", "--host", "0.0.0.0", "--port", "8080"]
+# ЗАПУСК MAIN_SIMPLE БЕЗ MIDDLEWARE
+CMD uvicorn app.main_simple:app --host 0.0.0.0 --port 8080
