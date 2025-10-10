@@ -9,8 +9,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем остальные файлы
 COPY . /app
 
-# Делаем скрипт запуска исполняемым
-RUN chmod +x start.sh
+EXPOSE 8080
 
-# Используем скрипт запуска с миграциями
-CMD ["./start.sh"]
+# Прямой запуск uvicorn без bash скрипта
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]

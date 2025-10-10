@@ -1,0 +1,17 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Минимальные зависимости
+COPY requirements.txt .
+RUN pip install --no-cache-dir fastapi uvicorn
+
+# Копируем только нужное
+COPY app/main_minimal.py app/main_minimal.py
+COPY start_minimal.sh .
+
+RUN chmod +x start_minimal.sh
+
+EXPOSE 8080
+
+CMD ["./start_minimal.sh"]
