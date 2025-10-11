@@ -1,10 +1,10 @@
 FROM python:3.11-slim
 
-# CACHEBUST для принудительной пересборки на Railway
-ARG CACHEBUST=20250111_002_CORS_FIX
-RUN echo "Build cache bust: $CACHEBUST"
-
 WORKDIR /app
+
+# КРИТИЧНО: CACHEBUST для принудительной пересборки на Railway
+# Изменение этого ENV инвалидирует ВСЕ последующие слои Docker
+ENV FORCE_REBUILD=20250111_003_FINAL_CORS_FIX
 
 # Устанавливаем зависимости
 COPY requirements.txt .
