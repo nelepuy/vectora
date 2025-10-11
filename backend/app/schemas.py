@@ -78,18 +78,22 @@ class LoginRequest(BaseModel):
 # ==================== TASK SCHEMAS ====================
 
 class TaskBase(BaseModel):
-    title: str = Field(..., min_length=1, max_length=500, description="Task title")
-    description: Optional[str] = Field(None, max_length=5000, description="Task description")
+    title: str = Field(..., min_length=1, max_length=500)
+    description: Optional[str] = Field(None, max_length=5000)
     date_time: Optional[datetime] = None
     priority: Optional[str] = Field("normal", pattern="^(low|normal|high)$")
     position: Optional[int] = Field(0, ge=0)
     category: Optional[str] = Field(None, max_length=100)
     tags: Optional[List[str]] = Field(default_factory=list)
+    parent_task_id: Optional[int] = None
+    recurrence_type: Optional[str] = Field(None, pattern="^(daily|weekly|monthly|yearly)?$")
+    recurrence_interval: Optional[int] = Field(None, ge=1, le=365)
+    reminder_enabled: Optional[bool] = False
+    reminder_minutes_before: Optional[int] = Field(30, ge=0, le=10080)
     
     @field_validator('tags')
     @classmethod
     def validate_tags(cls, v):
-        """Валидация тегов - максимум 10 тегов, каждый до 50 символов"""
         if v and len(v) > 10:
             raise ValueError('Maximum 10 tags allowed')
         if v:
@@ -110,14 +114,19 @@ class TaskUpdate(BaseModel):
     position: Optional[int] = None
     category: Optional[str] = None
     tags: Optional[List[str]] = None
+    parent_task_id: Optional[int] = None
+    recurrence_type: Optional[str] = None
+    recurrence_interval: Optional[int] = None
+    reminder_enabled: Optional[bool] = None
+    reminder_minutes_before: Optional[int] = None
 
 class TaskOut(TaskBase):
     id: int
-    user_id: int  # Теперь это integer, связь с User
+    user_id: int
     status: bool
     created_at: datetime
-    position: int
-    category: Optional[str] = None
-    tags: List[str] = Field(default_factory=list)
+    updated_at: datetime
+    next_occurrence: Optional[datetime] = None
+    subtasks: Optional[List['TaskOut']] = Field(default_factory=list)
     
     model_config = ConfigDict(from_attributes=True)

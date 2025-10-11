@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
-from app.routers import tasks, auth
+from app.routers import tasks, auth, stats
 from app.settings import settings
 from app.exceptions import VectoraException
 from app.logging_config import logger
@@ -76,6 +76,7 @@ async def vectora_exception_handler(request: Request, exc: VectoraException):
 
 app.include_router(auth.router)
 app.include_router(tasks.router)
+app.include_router(stats.router)
 
 
 @app.on_event("startup")

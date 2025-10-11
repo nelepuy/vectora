@@ -30,6 +30,7 @@ class Task(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    parent_task_id = Column(Integer, ForeignKey("tasks.id", ondelete="CASCADE"), nullable=True, index=True)
     title = Column(String, nullable=False, index=True)
     description = Column(Text)
     date_time = Column(DateTime, index=True)
@@ -38,7 +39,13 @@ class Task(Base):
     position = Column(Integer, default=0)
     category = Column(String, default=None, nullable=True, index=True)
     tags = Column(JSON, default=list)
+    recurrence_type = Column(String, nullable=True)
+    recurrence_interval = Column(Integer, nullable=True)
+    next_occurrence = Column(DateTime, nullable=True)
+    reminder_enabled = Column(Boolean, default=False)
+    reminder_minutes_before = Column(Integer, default=30)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     owner = relationship("User", back_populates="tasks")
+    subtasks = relationship("Task", backref="parent", remote_side=[id], cascade="all, delete-orphan")
