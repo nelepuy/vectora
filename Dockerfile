@@ -1,16 +1,15 @@
 FROM python:3.11-slim
 
-# Cache buster - изменение этого значения заставит пересобрать всё
-ARG CACHEBUST=2025-10-10-v3-force-rebuild
-
 WORKDIR /app
 
-# Копируем только requirements сначала для кэширования слоя
-COPY requirements.txt .
+# Копируем файлы backend
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копируем остальные файлы
-COPY . /app
+# Копируем приложение из backend/
+COPY backend/app ./app
+COPY backend/alembic.ini .
+COPY backend/migrations ./migrations
 
-# Используем Python entrypoint
-CMD ["python3", "entrypoint.py"]
+# Запускаем через alembic + uvicorn
+CMD sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"
