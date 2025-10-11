@@ -1,0 +1,5 @@
+# Force Rebuild Marker
+# This file exists only to force Railway to rebuild
+# Timestamp: 2025-01-11T00:30:00Z
+# Commit: 32af200
+FORCE_REBUILD=TRUE
