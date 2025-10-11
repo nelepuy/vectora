@@ -48,4 +48,4 @@ class Task(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     owner = relationship("User", back_populates="tasks")
-    subtasks = relationship("Task", backref="parent", remote_side=[id], cascade="all, delete-orphan")
+    subtasks = relationship("Task", backref="parent", remote_side=[id], cascade="all, delete")
