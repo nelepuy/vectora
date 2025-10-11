@@ -8,11 +8,19 @@ DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@db:5432
 # Оптимизированный engine с пулом соединений
 engine = create_engine(
     DATABASE_URL,
-    pool_size=10,  # Количество соединений в пуле
-    max_overflow=20,  # Дополнительные соединения при необходимости
-    pool_pre_ping=True,  # Проверка соединения перед использованием
-    pool_recycle=3600,  # Переиспользование соединений каждый час
-    echo=False  # Отключаем вывод SQL запросов в production
+    pool_size=10,
+    max_overflow=20,
+    pool_pre_ping=True,
+    pool_recycle=3600,
+    echo=False
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
