@@ -116,8 +116,13 @@ app.include_router(tasks.router)
 @app.on_event("startup")
 async def startup_event():
     """Действия при запуске приложения."""
-    logger.info(f"{APP_NAME} v{APP_VERSION} запускается...")
-    logger.info(f"Режим отладки: {settings.debug}")
+    import os
+    logger.info("=" * 60)
+    logger.info(f"🚀 {APP_NAME} v{APP_VERSION} НОВАЯ ВЕРСИЯ С CORS!")
+    logger.info(f"📂 Рабочая директория: {os.getcwd()}")
+    logger.info(f"🔧 Режим отладки: {settings.debug}")
+    logger.info(f"📝 Файл main.py изменён: CORS должен работать!")
+    logger.info("=" * 60)
     logger.info(f"CORS Origins: {allow_origins}")
     logger.info(f"Database URL: {settings.database_url[:30]}...")
 
