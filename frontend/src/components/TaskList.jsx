@@ -187,14 +187,29 @@ const SortableTask = memo(({ task, onStatusChange, onDeleteTask, onEditTask }) =
             </div>
           )}
           
-          {/* Категория */}
-          {task.category && (
-            <div className="task-meta">
+          {/* Категория и метаданные */}
+          <div className="task-meta">
+            {task.category && (
               <span className="task-category">
                 {getCategoryIcon(task.category)} {task.category}
               </span>
-            </div>
-          )}
+            )}
+            {task.recurrence_type && (
+              <span className="task-recurring" title="Recurring task">
+                🔄 {task.recurrence_type}
+              </span>
+            )}
+            {task.reminder_enabled && (
+              <span className="task-reminder" title="Reminder enabled">
+                ⏰ {task.reminder_minutes_before}min
+              </span>
+            )}
+            {task.subtasks && task.subtasks.length > 0 && (
+              <span className="task-subtasks" title="Has subtasks">
+                📋 {task.subtasks.filter(st => st.status).length}/{task.subtasks.length}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Действия — изолированы от DnD */}

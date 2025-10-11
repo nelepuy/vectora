@@ -109,7 +109,11 @@ function App() {
           priority: taskData.priority,
           category: taskData.category || null,
           status: false,
-          position: tasks.length
+          position: tasks.length,
+          recurrence_type: taskData.recurrence_type || null,
+          recurrence_interval: taskData.recurrence_interval || null,
+          reminder_enabled: taskData.reminder_enabled || false,
+          reminder_minutes_before: taskData.reminder_minutes_before || null,
         }),
       });
 

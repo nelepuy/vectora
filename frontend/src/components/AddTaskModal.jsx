@@ -29,6 +29,10 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
     time: "",
     priority: "normal",
     category: "",
+    recurrence_type: "",
+    recurrence_interval: 1,
+    reminder_enabled: false,
+    reminder_minutes_before: 30,
   });
 
   const handleSubmit = async (e) => {
@@ -51,12 +55,15 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
         priority: taskData.priority,
         category: taskData.category || null,
         dateTime: dateTimeValue,
+        recurrence_type: taskData.recurrence_type || null,
+        recurrence_interval: taskData.recurrence_type ? parseInt(taskData.recurrence_interval) : null,
+        reminder_enabled: taskData.reminder_enabled,
+        reminder_minutes_before: taskData.reminder_enabled ? parseInt(taskData.reminder_minutes_before) : null,
       });
     } catch (error) {
       console.error("Ошибка при создании задачи:", error);
     }
 
-    // ВСЕГДА закрываем модалку и очищаем форму (даже при ошибке)
     setOpen(false);
     setTaskData({
       title: "",
@@ -65,6 +72,10 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
       time: "",
       priority: "normal",
       category: "",
+      recurrence_type: "",
+      recurrence_interval: 1,
+      reminder_enabled: false,
+      reminder_minutes_before: 30,
     });
   };
 
@@ -171,6 +182,70 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
                   <option value="Здоровье" />
                 </datalist>
               </div>
+              
+              <div className="form-group">
+                <label htmlFor="recurrence_type">Повторение</label>
+                <select
+                  id="recurrence_type"
+                  name="recurrence_type"
+                  value={taskData.recurrence_type}
+                  onChange={handleChange}
+                  className="input-field"
+                >
+                  <option value="">Не повторять</option>
+                  <option value="daily">Ежедневно</option>
+                  <option value="weekly">Еженедельно</option>
+                  <option value="monthly">Ежемесячно</option>
+                </select>
+              </div>
+
+              {taskData.recurrence_type && (
+                <div className="form-group">
+                  <label htmlFor="recurrence_interval">Интервал</label>
+                  <input
+                    type="number"
+                    id="recurrence_interval"
+                    name="recurrence_interval"
+                    value={taskData.recurrence_interval}
+                    onChange={handleChange}
+                    min="1"
+                    max="30"
+                    className="input-field"
+                  />
+                </div>
+              )}
+
+              <div className="form-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="reminder_enabled"
+                    checked={taskData.reminder_enabled}
+                    onChange={(e) => handleChange({ target: { name: 'reminder_enabled', value: e.target.checked } })}
+                  />
+                  <span>Напоминание</span>
+                </label>
+              </div>
+
+              {taskData.reminder_enabled && (
+                <div className="form-group">
+                  <label htmlFor="reminder_minutes_before">За сколько минут</label>
+                  <select
+                    id="reminder_minutes_before"
+                    name="reminder_minutes_before"
+                    value={taskData.reminder_minutes_before}
+                    onChange={handleChange}
+                    className="input-field"
+                  >
+                    <option value="5">5 минут</option>
+                    <option value="15">15 минут</option>
+                    <option value="30">30 минут</option>
+                    <option value="60">1 час</option>
+                    <option value="1440">1 день</option>
+                  </select>
+                </div>
+              )}
+
               <div className="modal-footer">
                 <button
                   type="button"
