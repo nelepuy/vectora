@@ -58,15 +58,23 @@ function App() {
       if (currentSort) params.append('sort_by', currentSort);
       
       const url = `${API_BASE}/tasks/?${params.toString()}`;
+      console.log('Fetching tasks from:', url);
+      console.log('Auth headers:', getAuthHeaders());
+      
       const response = await fetch(url, {
         headers: getAuthHeaders(),
       });
       
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
+      console.log('Loaded tasks:', data);
       setTasks(data);
     } catch (error) {
       console.error('Ошибка загрузки задач:', error);
