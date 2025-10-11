@@ -1,4 +1,4 @@
-# Core (CACHEBUST: 20250111_002)
+# Core (CACHEBUST: 2025-01-11T00:07:30Z - FORCE REBUILD)
 fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
 sqlalchemy>=2.0.0
