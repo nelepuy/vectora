@@ -36,6 +36,15 @@ function App() {
   const [sortBy, setSortBy] = useState("position");
   const { webApp, user } = useTelegramWebApp();
 
+  // Вспомогательная функция для получения заголовков с аутентификацией
+  const getAuthHeaders = useCallback(() => {
+    const initData = window.Telegram?.WebApp?.initData || '';
+    return {
+      'Accept': 'application/json',
+      'X-Telegram-Init-Data': initData,
+    };
+  }, []);
+
   // Мемоизированная функция загрузки задач
   const fetchTasks = useCallback(async (currentFilters = filters, currentSort = sortBy) => {
     try {
@@ -50,16 +59,20 @@ function App() {
       
       const url = `${API_BASE}/tasks/?${params.toString()}`;
       const response = await fetch(url, {
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       setTasks(data);
     } catch (error) {
       console.error('Ошибка загрузки задач:', error);
+      setTasks([]);
     }
-  }, [filters, sortBy]);
+  }, [filters, sortBy, getAuthHeaders]);
 
   const handleFilterChange = useCallback((newFilters) => {
     setFilters(newFilters);
@@ -99,8 +112,8 @@ function App() {
       const response = await fetch(API_BASE + '/tasks/', {
         method: 'POST',
         headers: {
+          ...getAuthHeaders(),
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
         },
         body: JSON.stringify({
           title: taskData.title,
@@ -138,7 +151,7 @@ function App() {
       });
       // НЕ бросаем ошибку дальше, чтобы модалка закрылась
     }
-  }, [tasks.length, fetchTasks, webApp]);
+  }, [tasks.length, fetchTasks, webApp, getAuthHeaders]);
 
   const handleStatusChange = useCallback(async (taskId) => {
     const task = tasks.find(t => t.id === taskId);
@@ -152,8 +165,8 @@ function App() {
       const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
+          ...getAuthHeaders(),
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
         },
         body: JSON.stringify({ status: !task.status }),
       });
@@ -175,15 +188,13 @@ function App() {
         webApp?.showPopup({ title: 'Ошибка', message: 'Проблема с сетью', buttons: [{ type: 'close' }] });
       } catch {}
     }
-  }, [tasks, webApp]);
+  }, [tasks, webApp, getAuthHeaders]);
 
   const handleDeleteTask = useCallback(async (taskId) => {
     try {
       const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
         method: 'DELETE',
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
 
       if (response.ok) {
@@ -202,7 +213,7 @@ function App() {
         buttons: [{ type: 'close' }],
       });
     }
-  }, [tasks, webApp]);
+  }, [tasks, webApp, getAuthHeaders]);
 
   const handleEditTask = useCallback((task) => {
     setEditingTask(task);
@@ -214,8 +225,8 @@ function App() {
       const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
+          ...getAuthHeaders(),
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
         },
         body: JSON.stringify({
           title: taskData.title,
@@ -247,7 +258,7 @@ function App() {
       });
       // НЕ бросаем ошибку дальше, чтобы модалка закрылась
     }
-  }, [fetchTasks, webApp]);
+  }, [fetchTasks, webApp, getAuthHeaders]);
 
   return (
     <div className={`tg-webapp theme-${theme}`}>
