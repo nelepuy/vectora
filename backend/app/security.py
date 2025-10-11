@@ -1,45 +1,19 @@
-"""
-Security module: JWT authentication, password hashing, and security utilities
-"""
 from datetime import datetime, timedelta
 from typing import Optional, Any
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError
 import secrets
 import os
 
-# Секретные ключи (должны быть в переменных окружения)
 SECRET_KEY = os.getenv("SECRET_KEY", secrets.token_urlsafe(32))
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
-# Настройка хеширования паролей
-# Используем Argon2 как более безопасную альтернативу bcrypt
-pwd_context = CryptContext(
-    schemes=["argon2", "bcrypt"],
-    deprecated="auto",
-    argon2__memory_cost=65536,  # 64 MB
-    argon2__time_cost=3,  # 3 iterations
-    argon2__parallelism=4,  # 4 threads
-)
-
-# Argon2 password hasher
-argon2_hasher = PasswordHasher(
-    time_cost=3,
-    memory_cost=65536,
-    parallelism=4,
-    hash_len=32,
-    salt_len=16,
-)
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """
-    Проверка пароля с защитой от timing attacks
-    """
     try:
         return pwd_context.verify(plain_password, hashed_password)
     except Exception:
@@ -47,9 +21,6 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def get_password_hash(password: str) -> str:
-    """
-    Хеширование пароля с использованием Argon2
-    """
     return pwd_context.hash(password)
 
 
