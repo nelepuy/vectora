@@ -1,10 +1,9 @@
 FROM python:3.11-slim
 
-WORKDIR /app
+# КРИТИЧНО: Инвалидируем Docker кэш через изменение layer order
+RUN echo "FORCE REBUILD: 2025-01-11T00:06:00Z" > /tmp/rebuild.txt && cat /tmp/rebuild.txt
 
-# КРИТИЧНО: CACHEBUST для принудительной пересборки на Railway
-# Изменение этого ENV инвалидирует ВСЕ последующие слои Docker
-ENV FORCE_REBUILD=20250111_003_FINAL_CORS_FIX
+WORKDIR /app
 
 # Устанавливаем зависимости
 COPY requirements.txt .
