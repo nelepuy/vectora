@@ -17,7 +17,10 @@ depends_on = None
 
 
 def upgrade():
-    # Изменяем тип колонки user_id с String на Integer
+    # Сначала удаляем записи с нечисловым user_id (тестовые данные)
+    op.execute("DELETE FROM tasks WHERE user_id !~ '^[0-9]+$'")
+    
+    # Теперь изменяем тип колонки user_id с String на Integer
     # Используем USING для преобразования существующих данных
     op.execute('ALTER TABLE tasks ALTER COLUMN user_id TYPE INTEGER USING user_id::integer')
 
