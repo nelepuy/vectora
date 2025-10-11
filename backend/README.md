@@ -1,64 +1,125 @@
-# Vectora Backend (FastAPI)
+# Vectora Backend# Vectora Backend (FastAPI)
 
-Бэкенд для Telegram Mini App на FastAPI + SQLAlchemy + PostgreSQL с поддержкой аутентификации через Telegram WebApp.
 
-## ✨ Возможности
 
-- ✅ **CRUD API для задач** с поддержкой фильтрации и поиска
-- ✅ **Telegram аутентификация** через initData
-- ✅ **Автодокументация** Swagger UI (`/docs`) и ReDoc (`/redoc`)
-- ✅ **Пагинация и фильтрация** задач
-- ✅ **Структурированное логирование**
+FastAPI backend for Vectora task management system.Бэкенд для Telegram Mini App на FastAPI + SQLAlchemy + PostgreSQL с поддержкой аутентификации через Telegram WebApp.
+
+
+
+## Features## ✨ Возможности
+
+
+
+- RESTful API for task management- ✅ **CRUD API для задач** с поддержкой фильтрации и поиска
+
+- Telegram WebApp authentication- ✅ **Telegram аутентификация** через initData
+
+- PostgreSQL database with SQLAlchemy ORM- ✅ **Автодокументация** Swagger UI (`/docs`) и ReDoc (`/redoc`)
+
+- Alembic migrations- ✅ **Пагинация и фильтрация** задач
+
+- CORS support- ✅ **Структурированное логирование**
+
 - ✅ **Централизованная обработка ошибок**
-- ✅ **Unit и интеграционные тесты**
+
+## Setup- ✅ **Unit и интеграционные тесты**
+
 - ✅ **Настраиваемый CORS**
 
-## 🚀 Быстрый старт
+```bash
 
-### Локальная разработка
+python -m venv venv## 🚀 Быстрый старт
+
+source venv/bin/activate
+
+pip install -r requirements.txt### Локальная разработка
+
+```
 
 ```powershell
-cd backend
+
+## Configurationcd backend
+
 python -m venv venv
-.\venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
-```
 
-API будет доступно на http://localhost:8000
+Create `.env` file:.\venv\Scripts\activate
 
-### Docker
+```pip install -r requirements.txt
 
-```powershell
+DATABASE_URL=postgresql://user:password@host:5432/dbnameuvicorn app.main:app --reload --port 8000
+
+SECRET_KEY=your-secret-key-here```
+
+TELEGRAM_BOT_TOKEN=your-bot-token
+
+DEBUG=falseAPI будет доступно на http://localhost:8000
+
+BACKEND_CORS_ORIGINS=https://nelepuy.github.io
+
+```### Docker
+
+
+
+## Database Migrations```powershell
+
 docker-compose up -d backend
-```
 
-## 📁 Структура проекта
+```bash```
 
-```
-backend/
-├── app/
+# Apply migrations
+
+alembic upgrade head## 📁 Структура проекта
+
+
+
+# Create new migration```
+
+alembic revision --autogenerate -m "description"backend/
+
+```├── app/
+
 │   ├── routers/          # API endpoints
-│   │   └── tasks.py      # CRUD операции с задачами
+
+## Run Development Server│   │   └── tasks.py      # CRUD операции с задачами
+
 │   ├── auth.py           # Telegram аутентификация
-│   ├── crud.py           # Операции с БД
-│   ├── database.py       # Подключение к PostgreSQL
-│   ├── exceptions.py     # Кастомные исключения
+
+```bash│   ├── crud.py           # Операции с БД
+
+uvicorn app.main:app --reload│   ├── database.py       # Подключение к PostgreSQL
+
+```│   ├── exceptions.py     # Кастомные исключения
+
 │   ├── logging_config.py # Настройка логирования
-│   ├── main.py           # FastAPI приложение
+
+## API Endpoints│   ├── main.py           # FastAPI приложение
+
 │   ├── models.py         # SQLAlchemy модели
-│   ├── schemas.py        # Pydantic схемы
-│   └── settings.py       # Конфигурация
-├── migrations/           # Alembic миграции
-├── tests/               # Тесты
-│   ├── conftest.py      # Pytest fixtures
-│   ├── test_api.py      # API тесты
+
+- `GET /health` - Health check│   ├── schemas.py        # Pydantic схемы
+
+- `GET /version` - API version│   └── settings.py       # Конфигурация
+
+- `GET /tasks/` - List tasks├── migrations/           # Alembic миграции
+
+- `POST /tasks/` - Create task├── tests/               # Тесты
+
+- `PUT /tasks/{id}` - Update task│   ├── conftest.py      # Pytest fixtures
+
+- `DELETE /tasks/{id}` - Delete task│   ├── test_api.py      # API тесты
+
 │   ├── test_auth.py     # Тесты аутентификации
-│   └── test_crud.py     # CRUD тесты
+
+## Deployment│   └── test_crud.py     # CRUD тесты
+
 ├── requirements.txt     # Зависимости
-├── pytest.ini          # Конфигурация pytest
+
+Railway deployment uses root `Dockerfile` which copies from `backend/` directory.├── pytest.ini          # Конфигурация pytest
+
 └── API.md              # Документация API
-```
+
+Environment variables are set in Railway dashboard.```
+
 
 ## ⚙️ Переменные окружения
 

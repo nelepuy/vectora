@@ -34,17 +34,17 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    try {
-      let dateTimeValue = null;
-      
-      // Если заполнены дата И время - формируем dateTime
-      if (taskData.date && taskData.time) {
-        const [hours, minutes] = taskData.time.split(":");
-        const dateTime = new Date(taskData.date);
-        dateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-        dateTimeValue = toLocalISOStringNoTZ(dateTime);
-      }
+    let dateTimeValue = null;
+    
+    // Если заполнены дата И время - формируем dateTime
+    if (taskData.date && taskData.time) {
+      const [hours, minutes] = taskData.time.split(":");
+      const dateTime = new Date(taskData.date);
+      dateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      dateTimeValue = toLocalISOStringNoTZ(dateTime);
+    }
 
+    try {
       await onSubmit({
         title: taskData.title,
         description: taskData.description,
@@ -52,27 +52,20 @@ function AddTaskModal({ onSubmit, open, setOpen }) {
         category: taskData.category || null,
         dateTime: dateTimeValue,
       });
-
-      // Закрываем модалку
-      setOpen(false);
-      
-      // Сбрасываем форму
-      setTaskData({
-        title: "",
-        description: "",
-        date: "",
-        time: "",
-        priority: "normal",
-        category: "",
-      });
     } catch (error) {
       console.error("Ошибка при создании задачи:", error);
-      webApp?.showPopup({
-        title: "Ошибка",
-        message: "Не удалось создать задачу",
-        buttons: [{ type: "close" }],
-      });
     }
+
+    // ВСЕГДА закрываем модалку и очищаем форму (даже при ошибке)
+    setOpen(false);
+    setTaskData({
+      title: "",
+      description: "",
+      date: "",
+      time: "",
+      priority: "normal",
+      category: "",
+    });
   };
 
   const handleChange = (e) => {

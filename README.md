@@ -1,82 +1,162 @@
-# Vectora Backend (FastAPI)
+# Vectora# Vectora Backend (FastAPI)
 
-Бэкенд для Telegram Mini App на FastAPI + SQLAlchemy + PostgreSQL с поддержкой аутентификации через Telegram WebApp.
 
-## ✨ Возможности
 
-- ✅ **CRUD API для задач** с поддержкой фильтрации и поиска
-- ✅ **Telegram аутентификация** через initData
-- ✅ **Автодокументация** Swagger UI (`/docs`) и ReDoc (`/redoc`)
+Task management system with Telegram Mini App integration.Бэкенд для Telegram Mini App на FastAPI + SQLAlchemy + PostgreSQL с поддержкой аутентификации через Telegram WebApp.
+
+
+
+## Stack## ✨ Возможности
+
+
+
+- **Backend**: FastAPI, SQLAlchemy, PostgreSQL, Alembic- ✅ **CRUD API для задач** с поддержкой фильтрации и поиска
+
+- **Frontend**: React, Telegram WebApp API- ✅ **Telegram аутентификация** через initData
+
+- **Deployment**: Railway (backend), GitHub Pages (frontend)- ✅ **Автодокументация** Swagger UI (`/docs`) и ReDoc (`/redoc`)
+
 - ✅ **Пагинация и фильтрация** задач
-- ✅ **Структурированное логирование**
+
+## Quick Start- ✅ **Структурированное логирование**
+
 - ✅ **Централизованная обработка ошибок**
-- ✅ **Unit и интеграционные тесты**
+
+### Backend- ✅ **Unit и интеграционные тесты**
+
 - ✅ **Настраиваемый CORS**
 
-## 🚀 Быстрый старт
+```bash
 
-### Локальная разработка
+cd backend## 🚀 Быстрый старт
 
-```powershell
-cd backend
 python -m venv venv
-.\venv\Scripts\activate
+
+source venv/bin/activate  # Windows: venv\Scripts\activate### Локальная разработка
+
 pip install -r requirements.txt
+
+alembic upgrade head```powershell
+
+uvicorn app.main:app --reloadcd backend
+
+```python -m venv venv
+
+.\venv\Scripts\activate
+
+### Frontendpip install -r requirements.txt
+
 uvicorn app.main:app --reload --port 8000
-```
 
-API будет доступно на http://localhost:8000
+```bash```
 
-### Docker
+cd frontend
 
-```powershell
+npm installAPI будет доступно на http://localhost:8000
+
+npm start
+
+```### Docker
+
+
+
+## Environment Variables```powershell
+
 docker-compose up -d backend
+
+Backend `.env`:```
+
 ```
 
-## 📁 Структура проекта
+DATABASE_URL=postgresql://user:password@host:5432/dbname## 📁 Структура проекта
 
-```
-backend/
-├── app/
-│   ├── routers/          # API endpoints
+SECRET_KEY=your-secret-key
+
+TELEGRAM_BOT_TOKEN=your-bot-token```
+
+DEBUG=falsebackend/
+
+BACKEND_CORS_ORIGINS=https://nelepuy.github.io├── app/
+
+```│   ├── routers/          # API endpoints
+
 │   │   └── tasks.py      # CRUD операции с задачами
-│   ├── auth.py           # Telegram аутентификация
-│   ├── crud.py           # Операции с БД
-│   ├── database.py       # Подключение к PostgreSQL
-│   ├── exceptions.py     # Кастомные исключения
+
+Frontend `.env.production`:│   ├── auth.py           # Telegram аутентификация
+
+```│   ├── crud.py           # Операции с БД
+
+REACT_APP_API_URL=https://vectora-backend.up.railway.app│   ├── database.py       # Подключение к PostgreSQL
+
+```│   ├── exceptions.py     # Кастомные исключения
+
 │   ├── logging_config.py # Настройка логирования
-│   ├── main.py           # FastAPI приложение
+
+## Deployment│   ├── main.py           # FastAPI приложение
+
 │   ├── models.py         # SQLAlchemy модели
-│   ├── schemas.py        # Pydantic схемы
+
+### Backend (Railway)│   ├── schemas.py        # Pydantic схемы
+
 │   └── settings.py       # Конфигурация
-├── migrations/           # Alembic миграции
-├── tests/               # Тесты
-│   ├── conftest.py      # Pytest fixtures
+
+1. Connect GitHub repository├── migrations/           # Alembic миграции
+
+2. Set environment variables├── tests/               # Тесты
+
+3. Deploy from `railway-backend` branch│   ├── conftest.py      # Pytest fixtures
+
 │   ├── test_api.py      # API тесты
-│   ├── test_auth.py     # Тесты аутентификации
+
+### Frontend (GitHub Pages)│   ├── test_auth.py     # Тесты аутентификации
+
 │   └── test_crud.py     # CRUD тесты
-├── requirements.txt     # Зависимости
-├── pytest.ini          # Конфигурация pytest
-└── API.md              # Документация API
+
+```bash├── requirements.txt     # Зависимости
+
+cd frontend├── pytest.ini          # Конфигурация pytest
+
+npm run deploy└── API.md              # Документация API
+
+``````
+
+
+
+## Project Structure## ⚙️ Переменные окружения
+
+
+
+```Создайте `app/.env` на основе `.env.example`:
+
+backend/
+
+  app/```env
+
+    main.py          # FastAPI application# Режим разработки
+
+    models.py        # Database modelsDEBUG=true
+
+    routers/         # API endpoints
+
+    migrations/      # Alembic migrations# База данных
+
+frontend/DATABASE_URL=postgresql://postgres:postgres@db:5432/tasks
+
+  src/
+
+    App.jsx          # Main application# CORS (разделённые запятыми домены)
+
+    components/      # React componentsBACKEND_CORS_ORIGINS=http://localhost:3000,https://your-app.com
+
 ```
-
-## ⚙️ Переменные окружения
-
-Создайте `app/.env` на основе `.env.example`:
-
-```env
-# Режим разработки
-DEBUG=true
-
-# База данных
-DATABASE_URL=postgresql://postgres:postgres@db:5432/tasks
-
-# CORS (разделённые запятыми домены)
-BACKEND_CORS_ORIGINS=http://localhost:3000,https://your-app.com
 
 # Telegram Bot Token (обязательно для продакшена)
-TELEGRAM_BOT_TOKEN=your-telegram-bot-token-here
+
+## LicenseTELEGRAM_BOT_TOKEN=your-telegram-bot-token-here
+
 ```
+
+MIT
 
 ## 🧪 Тестирование
 
