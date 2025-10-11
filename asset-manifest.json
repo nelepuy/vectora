@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/vectora/static/css/main.b59576dd.css",
-    "main.js": "/vectora/static/js/main.8ab5e56b.js",
+    "main.css": "/vectora/static/css/main.ba5e8cb1.css",
+    "main.js": "/vectora/static/js/main.07df3554.js",
     "index.html": "/vectora/index.html",
-    "main.b59576dd.css.map": "/vectora/static/css/main.b59576dd.css.map",
-    "main.8ab5e56b.js.map": "/vectora/static/js/main.8ab5e56b.js.map"
+    "main.ba5e8cb1.css.map": "/vectora/static/css/main.ba5e8cb1.css.map",
+    "main.07df3554.js.map": "/vectora/static/js/main.07df3554.js.map"
   },
   "entrypoints": [
-    "static/css/main.b59576dd.css",
-    "static/js/main.8ab5e56b.js"
+    "static/css/main.ba5e8cb1.css",
+    "static/js/main.07df3554.js"
   ]
 }
