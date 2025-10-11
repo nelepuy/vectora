@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import datetime
 
-from ..database import SessionLocal
+from ..database import get_db
 from .. import models, schemas
 from ..security import (
     verify_password,
@@ -20,15 +20,6 @@ from ..security import (
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 security = HTTPBearer()
-
-
-def get_db():
-    """Dependency для получения сессии БД"""
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 def get_current_user(

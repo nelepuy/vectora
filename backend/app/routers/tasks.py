@@ -1,18 +1,12 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from app import crud, schemas, database
+from app import crud, schemas
+from app.database import get_db
 from app.auth import get_current_user
 from typing import List, Optional
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
-
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.get("/", response_model=List[schemas.TaskOut])
