@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/vectora/static/css/main.ba5e8cb1.css",
-    "main.js": "/vectora/static/js/main.07df3554.js",
+    "main.js": "/vectora/static/js/main.616d29aa.js",
     "index.html": "/vectora/index.html",
     "main.ba5e8cb1.css.map": "/vectora/static/css/main.ba5e8cb1.css.map",
-    "main.07df3554.js.map": "/vectora/static/js/main.07df3554.js.map"
+    "main.616d29aa.js.map": "/vectora/static/js/main.616d29aa.js.map"
   },
   "entrypoints": [
     "static/css/main.ba5e8cb1.css",
-    "static/js/main.07df3554.js"
+    "static/js/main.616d29aa.js"
   ]
 }
