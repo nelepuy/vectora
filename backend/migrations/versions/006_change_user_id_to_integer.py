@@ -1,7 +1,7 @@
 """change user_id to integer
 
-Revision ID: 002
-Revises: 001
+Revision ID: 006
+Revises: 005_create_users
 Create Date: 2025-10-11 04:17:00.000000
 
 """
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '002'
-down_revision = '001'
+revision = '006'
+down_revision = '005_create_users'
 branch_labels = None
 depends_on = None
 
